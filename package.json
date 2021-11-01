@@ -1,0 +1,20 @@
+{
+  "name": "codesquad_cocoa",
+  "version": "1.0.0",
+  "description": "코드스쿼드 코코아",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jindonyy/codesquad_cocoa.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jindonyy/codesquad_cocoa/issues"
+  },
+  "homepage": "https://github.com/jindonyy/codesquad_cocoa#readme"
+}
