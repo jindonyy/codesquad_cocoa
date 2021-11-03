@@ -35,6 +35,6 @@ function getArea(shape) {
 function printExecutionSequence() {
 	let results = [];
 	results.push(getArea('circle', 10));
-	results.push(getArea('circle', 10));
+	results.push(getArea('trapezoid', 5, 5, 8));
 	console.log(results.join(", "));
 }
