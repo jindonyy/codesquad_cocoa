@@ -6,10 +6,7 @@ function getAverage(grade) {
 }
 
 function getAverageArr(grades) {
-    let average = [];
-    
-    grades.forEach(el => average.push(getAverage(el)));
-    return average;
+    return grades.map(el => getAverage(el));
 }
 
 console.log(getAverageArr(grades));
