@@ -31,7 +31,7 @@ function getNumElement(data) {
     function differentiateType(obj) {    
         for(let key in obj) {
             const el = obj[key];
-            if(el instanceof Object) differentiateType(el);
+            if(Object.prototype.toString.call(el) === '[object Object]') differentiateType(el);
             else {
                 if(typeof(el) === 'number') numValue.push(key);
             }

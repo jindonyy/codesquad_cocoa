@@ -26,9 +26,7 @@ console.log(getNewPerson(people));
 
 // forEach, filter 사용
 function removeNum2(person) {
-    let split = person.split("");
-
-    split = split.filter(el => isNaN(Number(el)));
+    person.split("").filter(el => isNaN(Number(el)));
     return split.join("");
 }
 
