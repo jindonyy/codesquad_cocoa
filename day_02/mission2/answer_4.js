@@ -38,8 +38,11 @@ function getNumElement(data) {
         }    
     }
     differentiateType(data);
-
+    
     return numValue;
 }
 
 console.log(getNumElement(data));
+
+// Object.prototype.toString.call(el) === '[object Object]' 대신에
+// el.constructor === Object 도 사용 가능
