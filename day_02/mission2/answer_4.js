@@ -31,10 +31,8 @@ function getNumElement(data) {
     function differentiateType(obj) {    
         for(let key in obj) {
             const el = obj[key];
-            if(Object.prototype.toString.call(el) === '[object Object]') differentiateType(el);
-            else {
-                if(typeof(el) === 'number') numValue.push(key);
-            }
+            if(typeof(el) === 'object' && el !== null) differentiateType(el); // typeof(null)도 'object'라 예외처리
+            else if(typeof(el) === 'number') numValue.push(key);
         }    
     }
     differentiateType(data);
@@ -44,5 +42,5 @@ function getNumElement(data) {
 
 console.log(getNumElement(data));
 
-// Object.prototype.toString.call(el) === '[object Object]' 대신에
-// el.constructor === Object 도 사용 가능
+// Object.prototype.toString.call(el) === '[object Object]'
+// el.constructor === Object

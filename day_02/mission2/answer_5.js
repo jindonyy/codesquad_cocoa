@@ -86,17 +86,10 @@ function getSkName(data) {
 		if(obj.type === "sk") skNameArr.push(obj.name);
 		for(let key in obj) {
             const el = obj[key];
-			if(Array.isArray(el)) loopArray(el);
+			if(typeof(el) === 'object' && el !== null) searchSk(el); // typeof(null)도 'object'라 예외처리
 		}
 	}
-
-    function loopArray(arr) {    
-        arr.forEach(el => {
-			// if(Object.prototype.toString.call(el) === '[object Object]') searchSk(el);
-			searchSk(el);
-		}); 
-    }
-    loopArray(data);
+    searchSk(data);
 
     return skNameArr;
 }
