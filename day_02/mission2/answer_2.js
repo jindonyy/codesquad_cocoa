@@ -27,8 +27,8 @@ console.log(getNewPerson(people));
 // forEach, filter 사용
 function removeNum2(person) {
     const splitArr = person.split("");
-    const newSplitArr = splitArr.filter(el => isNaN(Number(el)));
-    return newSplitArr.join("");
+    
+    return splitArr.filter(el => isNaN(Number(el))).join("");
 }
 
 function getNewPerson2(people) {
@@ -41,3 +41,16 @@ function getNewPerson2(people) {
 }
 
 console.log(getNewPerson2(people));
+
+
+// 정규식만 사용
+function getNewPerson3(people) {
+    let newPeople = [];
+
+    people.forEach(person => {
+        if(!regExp.test(person)) newPeople.push(person.replace(/[0-9]/g, ""));
+    });
+    return newPeople;
+}
+
+console.log(getNewPerson3(people));
