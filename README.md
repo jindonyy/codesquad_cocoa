@@ -10,4 +10,4 @@
 * quesion.md: 문제 기록 markdown
   
 ## Language
-`javascript` / `node.js` / markdown
+`javascript` / `node.js` / `markdown`
