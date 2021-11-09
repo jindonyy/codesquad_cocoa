@@ -12,7 +12,7 @@ hashMap.prototype.get = function(key) {
     return this[key];
 }
 hashMap.prototype.isEmpty = function() {
-    return hash.keys().length === 0 ? true : false;
+    return hashMap.prototype.keys().length === 0 ? true : false;
 }
 hashMap.prototype.keys = function() {
     return Object.keys(this);
@@ -21,23 +21,25 @@ hashMap.prototype.replace = function(key, value) {
     this[key] = value;
 }
 hashMap.prototype.size = function() {
-    return hash.keys().length;
+    return hashMap.prototype.keys().length;
 }
 hashMap.prototype.clear = function() {
-    for (var key in hash) {
-        delete hash[key];
+    for (var key in map) {
+        delete map[key];
     }
 }
 
-const hash = new hashMap();
+const map = new hashMap();
 
 
-hash.put('a', 1);
-hash.put('A', 1);
-hash.remove('A');
-console.log(hash.containsKey('A'));
-console.log(hash.get('a'));
-console.log(hash.isEmpty());
-console.log(hash.keys());
-console.log(hash.size());
-hash.clear();
+map.put('a', 1);
+map.put('b', 2);
+map.put('c', 3); // hashMap { a: 1, b: 2, c: 3 }
+map.remove('b'); // hashMap { a: 1, c: 3 }
+console.log(map.containsKey('A')); // false
+console.log(map.get('a')); // 1
+console.log(map.isEmpty()); // false
+console.log(map.keys()); // ['a', 'c']
+map.replace('a', 0); // hashMap { a: 0, c: 3 }
+console.log(map.size()); // 2
+map.clear(); // hashMap {}
