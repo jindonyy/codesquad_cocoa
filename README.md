@@ -7,7 +7,7 @@
 ### 생성 파일들
 * day_N 폴더: 날마다가 아닌 문제들이 주어진 날 생성
 * answer_N.js: 정답 파일
-* quesion.md: 문제 기록 markdown
+* 각 폴더 속 README.md: 문제 기록
   
 ## Language
 `javascript` / `node.js` / `markdown`
