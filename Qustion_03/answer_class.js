@@ -13,7 +13,7 @@ class hashMap {
         return this[key];
     }
     isEmpty() {
-        return hashMap.prototypekeys().length === 0 ? true : false;
+        return hashMap.prototype.keys().length === 0 ? true : false;
     }
     keys() {
         return Object.keys(this);
@@ -22,7 +22,7 @@ class hashMap {
         this[key] = value;
     }
     size() {
-        return hashMap.prototypekeys().length;
+        return hashMap.prototype.keys().length;
     }
     clear() {
         for (var key in map) {
