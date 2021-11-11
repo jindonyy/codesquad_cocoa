@@ -22,24 +22,6 @@ analyzeArr.prototype.getDataInfo = function(data) {
     console.log(`배열의 중첩된 깊이 수준은 ${openBracketArr.length}이며, 총 ${commaArr.length+1}개의 원소가 포함되어 있습니다.`);
 }
 
-// 3. 배열 구조 출력
-analyzeArr.prototype.getDataStructure = function(data) {
-    try {
-        data = JSON.parse(data);
-    } catch(e){
-        console.log('열고 닫는 괄호를 확인해주세요.');
-        return false;
-    }
-
-    const dataStructure = {};
-
-
-
-    console.log(dataStructure);
-}
-
-const arrData = new analyzeArr();
-
 
 arrData.getDataInfo(wrongData2); // 여는 괄호가 일치하지 않습니다.
 arrData.getDataInfo(data); // 여는 괄호가 일치하지 않습니다.
