@@ -1,4 +1,4 @@
-const data = "[111,2,[33,[4],[5,[6]]]]";
+const data = "[111,2,[33,[4],[[5],6]]]";
 const wrongData1 = "[111,2,[33,4,[5,[6]]]";
 const wrongData2 = "[111,2,[33,4,[5,[6]]]]]]";
 
@@ -7,35 +7,33 @@ const wrongData2 = "[111,2,[33,4,[5,[6]]]]]]";
 const getDataInfo = (data) => {
     bracketArr = [];
     dataInfo = {
-        braket: 0,
+        bracket: 0,
         number: 1
     };
 
     for(let i = 0, len = data.length; i < len; i++) {
         const el = data[i];
         switch(el) {
-            case ' ':
-                continue;
-            case !isNaN(el):
-                continue;
             case '[':
                 bracketArr.push('[');
+                if(bracketArr.length > dataInfo.bracket) dataInfo.bracket = bracketArr.length;
                 break;
             case ',':
                 dataInfo.number++;
                 break;
             case ']':
-                if(data[i+1] !== ',') dataInfo.braket++;
                 if(bracketArr.length) bracketArr.pop();
                 else {
                     console.log('여는 괄호가 일치하지 않습니다.');
                     return false;
                 }
+            default:
+                continue;
         }
     }
     
     if(bracketArr.length) console.log('닫는 괄호가 일치하지 않습니다.');
-    else console.log(`배열의 중첩된 깊이 수준은 ${dataInfo.braket}이며, 총 ${dataInfo.number}개의 원소가 포함되어 있습니다.`);
+    else console.log(`배열의 중첩된 깊이 수준은 ${dataInfo.bracket}이며, 총 ${dataInfo.number}개의 원소가 포함되어 있습니다.`);
 }
 
 // 3. 배열 구조 출력
@@ -57,7 +55,7 @@ const pushChild = (dataStr) => {
         return parent[parent.length-1].child;
     } else {
         child = {
-            'type': isNaN(dataStr) ? typeof dataStr : Number(dataStr),
+            'type': isNaN(dataStr) ? 'string' : 'number',
             'value': dataStr,
             'child': []
         }
