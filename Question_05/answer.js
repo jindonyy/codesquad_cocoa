@@ -57,19 +57,19 @@ class RegularDistribution {
         return Math.abs(scope - this.getMean()) / this.getStandardDeviation();
     }
     getRegularDistribution(scope) { // 정규분포
-        const z = this.getZ(scope).toFixed(2);
+        const z = Math.abs(this.getZ(scope)) >= 3.5 ? '3.49' : this.getZ(scope).toFixed(2);
         const row = z.substr(0, 3)*10;
         const col = z.substr(3, 4)*1;
-
-        return SND[row][col];
+        return scope < this.getMean() ? 1 -  SND[row][col] : SND[row][col];
     }
     getRegularDistributionRate(scope1, scope2) { // 정규분포 확률
         const gap = this.getRegularDistribution(scope2) - this.getRegularDistribution(scope1);
-        return `${(gap * 100).toFixed(2)}%`;
+        return `${(Math.abs(gap) * 100).toFixed(2)}%`;
     }
 }
 
 const regularDistribution = new RegularDistribution(data);
 
-console.log(regularDistribution.getRegularDistribution(80))
+
 console.log(regularDistribution.getRegularDistributionRate(70, 80))
+console.log(regularDistribution);
