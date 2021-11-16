@@ -57,7 +57,7 @@ class RegularDistribution {
         return Math.abs(scope - this.getMean()) / this.getStandardDeviation();
     }
     getRegularDistribution(scope) { // 정규분포
-        const z = Math.abs(this.getZ(scope)) >= 3.5 ? '3.49' : this.getZ(scope).toFixed(2);
+        const z = this.getZ(scope) >= 3.5 ? '3.49' : this.getZ(scope).toFixed(2);
         const row = z.substr(0, 3)*10;
         const col = z.substr(3, 4)*1;
         return scope < this.getMean() ? 1 -  SND[row][col] : SND[row][col];
@@ -72,4 +72,3 @@ const regularDistribution = new RegularDistribution(data);
 
 
 console.log(regularDistribution.getRegularDistributionRate(70, 80))
-console.log(regularDistribution);
