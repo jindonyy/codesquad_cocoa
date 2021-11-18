@@ -16,17 +16,17 @@ class addListController {
         $txt.innerText = txt;
         return $txt;
     }
-    addDate() {
+    addDate(date) {
         const $date = document.createElement('span');
         $date.classList.add('date');
-        $date.innerText = dataManager.prototype.getDate();
+        $date.innerText = date;
         return $date;
     }
     addDelBtn() {
-        const $delBtn = document.createElement('button');
-        $delBtn.classList.add('delBtn');
-        $delBtn.addEventListener('click', (e) => dataManager.prototype.deleteData.call(toDoData, e));
-        return $delBtn;
+        const $deleteBtn = document.createElement('button');
+        $deleteBtn.classList.add('deleteBtn');
+        $deleteBtn.addEventListener('click', (e) => dataManager.prototype.deleteData.call(toDoData, e));
+        return $deleteBtn;
     }
     addToDoList(toDoData) {
         const $li = document.createElement('li');
@@ -52,11 +52,13 @@ class dataManager {
         const newDate = new Date(); 
         return `${newDate.getFullYear()}.${newDate.getMonth() + 1}.${newDate.getDate()}`;
     }
-    saveData() {
+    getTxt() {
         const toDoTxt = this.$addInput.value;
-        if(toDoTxt === "") return false;
-        
-        const toDoData = {'txt': toDoTxt, 'date': this.getDate()};
+        return toDoTxt === "" ? false : toDoTxt;
+    }
+    saveData() {
+        if(!this.getTxt()) return false;
+        const toDoData = {'txt': this.getTxt(), 'date': this.getDate()};
         this.toDoDataArr.push(toDoData);
         localStorage.setItem(this.storageKey, JSON.stringify(this.toDoDataArr));
         addListController.prototype.addToDoList(toDoData);
@@ -64,10 +66,11 @@ class dataManager {
     }
     deleteData(e) {
         e.preventDefault();
-        const $delBtn = e.currentTarget;
-        this.toDoDataArr = this.toDoDataArr.filter(el => el.txt !== $delBtn.parentNode.querySelector('.txt').innerText);
+        const $deleteBtn = e.currentTarget;
+        const dataTodelete = $deleteBtn.parentNode.querySelector('.txt').innerText
+        this.toDoDataArr = this.toDoDataArr.filter(el => el.txt !== dataTodelete);
         localStorage.setItem(this.storageKey, JSON.stringify(this.toDoDataArr));
-        $delBtn.parentNode.remove();
+        $deleteBtn.parentNode.remove();
     }
 }
 
