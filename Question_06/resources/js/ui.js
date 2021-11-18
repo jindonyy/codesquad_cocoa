@@ -38,7 +38,7 @@ class addListController {
 class dataManager {
     constructor() {
         this.storageKey = 'toDoData';
-        this.$addInput = document.querySelector('.addWrap input');
+        this.$addInput = document.querySelector('.addFormWrap input');
         this.toDoDataArr = [];
     }
     toDoInit() {
@@ -79,6 +79,6 @@ const toDoData = new dataManager();
 const toDoList = new addListController();
 toDoData.toDoInit();
 document.querySelector('.addBtn').addEventListener('click', toDoData.saveData.bind(toDoData));
-document.querySelector('.addWrap input').addEventListener('keyup', function(e) {
+document.querySelector('.addFormWrap input').addEventListener('keyup', function(e) {
     if(e.keyCode == 13) toDoData.saveData.call(toDoData);
 });

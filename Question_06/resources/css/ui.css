@@ -16,7 +16,7 @@ button:focus {
     outline: none;
 }
 
-.addWrap {
+.addFormWrap {
     position: relative;
     top: 0;
     left: 0;
@@ -25,24 +25,24 @@ button:focus {
     text-align: center;
     font-size: 0;
 }
-.addWrap .inputWrap {
+.addFormWrap .inBox {
     display: inline-block;
 }
-.addWrap .inputWrap input {
+.addFormWrap .inBox input {
     float: left;
     width: 300px;
     height: 34px;
     padding: 2px 10px;
     line-height: 30px;
 }
-.addWrap .searchBtn {
+.addFormWrap .searchBtn {
     float: left;
     width: 34px;
     height: 34px;
     margin-left: -4px;
     background: #fff url('../images/search-icon.png') no-repeat center / 50%;
 }
-.addWrap .addBtn {
+.addFormWrap .addBtn {
     display: inline-block;
     height: 34px;
     margin-left: 15px;
