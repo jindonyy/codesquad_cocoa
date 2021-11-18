@@ -112,11 +112,11 @@ button:focus {
     overflow: hidden;
     white-space: nowrap;
 }
-.contents .toDoList li .delBtn {
+.contents .toDoList li .deleteBtn {
     width: 30px;
     height: 30px;
 }
-.contents .toDoList li .delBtn:after {
+.contents .toDoList li .deleteBtn:after {
     content: 'X';
 }
 .contents .toDoList li.success .txt {
