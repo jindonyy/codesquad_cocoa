@@ -34,13 +34,7 @@ function readLine() {
  */
 
 function kangaroo(x1, v1, x2, v2) {
-    if(x1 > x2 && v1 < v2) {
-        let i = 0;
-        while(x1 + v1 * i >= x2 + v2 * i) {
-            if(x1 + v1 * i === x2 + v2 * i) return 'YES';
-            i++;
-        }
-    } else if (x1 < x2 && v1 > v2) {
+    if (v1 > v2) {
         let i = 0;
         while(x1 + v1 * i <= x2 + v2 * i) {
             if(x1 + v1 * i === x2 + v2 * i) return 'YES';
