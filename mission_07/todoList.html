@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>도니의 To Do List 🐶</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400&family=Open+Sans:ital,wght@0,400;0,600;1,300&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="resources/css/reset.css">
+    <link rel="stylesheet" href="resources/css/ui.css">
+</head>
+<body>
+    <div class="wrap">
+        <header>
+            <div class="addFormWrap">
+                <div class="inBox">
+                    <form action="" onsubmit="return false;" class="addForm">
+                        <input type="text" placeholder="Add or Search your to do.">
+                        <button type="button" class="searchBtn"></button>
+                    </form>
+                </div>
+                <button type="button" class="addBtn">Add</button>
+            </div>
+        </header>
+        <main class="contents">
+            <h1>도니의 To Do List 🐶</h1>
+            <div class="allDelete">
+                <input class="allChk" type="checkbox">
+                <button type="button" class="allDelBtn">Delete</button>
+            </div>
+            <ul class="toDoList">
+                <li>
+                    <input type="checkbox" name="" id="">
+                    <span class="txt">햄디랑 동숲하기</span>
+                    <span class="date">2021.11.22</span>
+                    <button class="successBtn"></button>
+                    <button class="editBtn"></button>
+                    <button class="deleteBtn"></button>
+                </li>
+            </ul>
+        </main>
+    </div>
+    <script type="text/javascript" src="resources/js/ui.js"></script>
+</body>
+</html>
