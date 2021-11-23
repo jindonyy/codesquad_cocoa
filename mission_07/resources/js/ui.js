@@ -10,11 +10,6 @@ class ToDoModel {
         return this.toDoDataArr;
     }
 
-    getDate() {
-        const newDate = new Date(); 
-        return `${newDate.getFullYear()}.${newDate.getMonth() + 1}.${newDate.getDate()}`;
-    }
-
     saveData() {
         localStorage.setItem(this.storageKey, JSON.stringify(this.toDoDataArr));
     }
@@ -54,6 +49,10 @@ class ToDoView {
         this.$addInput.value = "";
     }
 
+    markCompletionToDo(list) {
+        list.classList.toggle('completion');
+    }
+
     deleteToDo(list) {
         list.closest('li').remove();
     }
@@ -71,14 +70,19 @@ class ToDoController {
         storageData.forEach((el) => this.view.renderToDo(this.addToDo(el))); 
     }
 
-    addBtnEvent(e) {
+    getDate() {
+        const newDate = new Date(); 
+        return `${newDate.getFullYear()}.${newDate.getMonth() + 1}.${newDate.getDate()}`;
+    }
+
+    addBtnHandler(e) {
         e.preventDefault();
         const toDoTxt = this.model.$addInput.value;
         if(!toDoTxt) return false;
         const toDoData = {
             'id': String(Date.now()),
             'txt': toDoTxt,
-            'date': this.model.getDate(),
+            'date': this.getDate(),
             'completion': 'incompletion'
         };
         this.model.addData(toDoData);
@@ -87,26 +91,25 @@ class ToDoController {
 
     initEvent() {
         this.view.$addBtn.addEventListener('click', (e) => {
-            this.addBtnEvent(e);
+            this.addBtnHandler(e);
         });
         this.view.$addInput.addEventListener('keyup', (e) => {
-            if(e.keyCode == 13) this.addBtnEvent(e);
+            if(e.keyCode == 13) this.addBtnHandler(e);
         });
     }
 
-    completionBtnHandler($li) {
+    completionBtnHandler(list) {
         const $completionBtn = $li.querySelector('.completionBtn');
         $completionBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            const completionBtnClass = $li.classList;
-            completionBtnClass.toggle('completion');
-            const completionValue = completionBtnClass.contains('completion') ? 'completion' : 'incompletion';
+            const completionValue = $li.classLis.contains('completion') ? 'completion' : 'incompletion';
             this.model.changeData({id: $li.id, key: 'completion', value: completionValue});
+            this.view.markCompletionToDo($li);
         });
         return $completionBtn;
     }
 
-    editingBtnHandler($li) {
+    editingBtnHandler(list) {
         const $editingBtn = $li.querySelector('.editingBtn');
         $editingBtn.addEventListener('click', (e) => {
             e.preventDefault();
@@ -123,7 +126,7 @@ class ToDoController {
         return $editingBtn;
     }
 
-    deleteBtnHandler($li) {
+    deleteBtnHandler(list) {
         const $deleteBtn = $li.querySelector('.deleteBtn');
         $deleteBtn.addEventListener('click', (e) => {
             e.preventDefault();
