@@ -121,15 +121,15 @@ button:focus {
     align-items: center;
     gap: 5px;
 }
-.contents .toDoList li .completeBtn, .contents .toDoList li .editBtn, .contents .toDoList li .deleteBtn {
+.contents .toDoList li .completionBtn, .contents .toDoList li .editingBtn, .contents .toDoList li .deleteBtn {
     width: 30px;
     height: 30px;
 }
-.contents .toDoList li .completeBtn:after {
+.contents .toDoList li .completionBtn:after {
     content: '☑️';
     font-size: 20px;
 }
-.contents .toDoList li .editBtn:after {
+.contents .toDoList li .editingBtn:after {
     content: '✏️';
     font-size: 20px;
 }
