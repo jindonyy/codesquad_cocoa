@@ -2,28 +2,30 @@ class ToDoModel {
     constructor() {
         this.storageKey = 'to-do-list';
         this.$addInput = document.querySelector('.addFormWrap input');
-        this.toDoData = {
-            'txt': '',
-            'date': this.getDate(),
-            'complete': 'incomplete'
-        };
-        this.toDoDataArr = [];
     }
     initData () {
         const storage = localStorage.getItem(this.storageKey);
-        if(storage) return this.toDoDataArr = JSON.parse(storage);
+        this.toDoDataArr = storage ? JSON.parse(storage) : [];
+        return this.toDoDataArr;
     }
     getDate() {
         const newDate = new Date(); 
         return `${newDate.getFullYear()}.${newDate.getMonth() + 1}.${newDate.getDate()}`;
     }
     saveData() {
-        this.toDoDataArr.push(this.toDoData);
         localStorage.setItem(this.storageKey, JSON.stringify(this.toDoDataArr));
+    }
+    addData(toDoData) {
+        this.toDoDataArr.push(toDoData);
+        this.saveData();
+    }
+    changeData(id) {
+        this.toDoDataArr.find(data => data.id === id);
+        this.saveData();
     }
     deleteData(data) {
         this.toDoDataArr = this.toDoDataArr.filter(el => el.txt !== data);
-        localStorage.setItem(this.storageKey, JSON.stringify(this.toDoDataArr));
+        this.saveData();
     }
 }
 
@@ -33,14 +35,14 @@ class ToDoView {
         this.$addInput = document.querySelector('.addFormWrap input');
     }
     initView(data) {
-        data.forEach((el) => this.renderToDo(el));
+        data.forEach((list) => this.renderToDo(list));
     }
     renderToDo(list) {
         document.querySelector('.toDoList').appendChild(list);
         this.$addInput.value = "";
     }
     deleteToDo(list) {
-        list.parentNode.parentNode.remove();
+        list.closest('li').remove();
     }
 }
 
@@ -51,22 +53,27 @@ class ToDoController {
     }
     initToDo() {
         const storageData = this.model.initData();
-        if(storageData) storageData.forEach((el) => this.view.renderToDo(this.addToDo(el))); 
+        storageData.forEach((el) => this.view.renderToDo(this.addToDo(el))); 
     }
-    addBtnEvent() {
+    addBtnEvent(e) {
+        e.preventDefault();
         const toDoTxt = this.model.$addInput.value;
         if(!toDoTxt) return false;
-        this.model.toDoData.txt = toDoTxt;
-        this.model.saveData();
-        this.view.renderToDo(this.addToDo(this.model.toDoData));
+        const toDoData = {
+            'id': Date.now(),
+            'txt': toDoTxt,
+            'date': this.model.getDate(),
+            'complete': 'incomplete'
+        };
+        this.model.pushData(toDoData);
+        this.view.renderToDo(this.addToDo(toDoData));
     }
     initEvent() {
         this.view.$addBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            this.addBtnEvent();
+            this.addBtnEvent(e);
         });
         this.view.$addInput.addEventListener('keyup', (e) => {
-            if(e.keyCode == 13) this.addBtnEvent();
+            if(e.keyCode == 13) this.addBtnEvent(e);
         });
     }
 
@@ -76,9 +83,8 @@ class ToDoController {
         $completeBtn.addEventListener('click', (e) => {
             e.preventDefault();
             const target = e.currentTarget;
-            target.parentNode.parentNode.classList.toggle('complete');
-            this.model.toDoData.complete = (target.parentNode.parentNode.classList.contains('complete')) ? 'complete': 'incomplete';
-            this.model.saveData();
+            target.closest('li').classList.toggle('complete');
+            this.model.changeData()
         });
         return $completeBtn;
     }
@@ -97,7 +103,7 @@ class ToDoController {
         $deleteBtn.classList.add('deleteBtn');
         $deleteBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            const dataTodelete = $deleteBtn.parentNode.parentNode.querySelector('.txt').innerText;
+            const dataTodelete = $deleteBtn.closest('li .txt').innerText;
             this.model.deleteData(dataTodelete);
             this.view.deleteToDo($deleteBtn);
         });
@@ -105,12 +111,15 @@ class ToDoController {
     }
     addToDo(data) {
         const $li = document.createElement('li');
+        $li.id = Date.now();
         $li.innerHTML = `<input type="checkbox">
                         <span class="txt">${data.txt}</span>
                         <span class="date">${data.date}</span>
                         <div class="btnWrap">
                         </div>`;
-        $li.querySelector('.btnWrap').append(this.createCompleteBtn(), this.createEditBtn(), this.createDeleteBtn());
+        $li.querySelector('.btnWrap').appendChild(this.createCompleteBtn());
+        $li.querySelector('.btnWrap').appendChild(this.createEditBtn());
+        $li.querySelector('.btnWrap').appendChild(this.createDeleteBtn());
         return $li;
     }
 }
