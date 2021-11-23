@@ -1,73 +1,90 @@
 class ToDoModel {
     constructor() {
-        this.storageKey = 'to-do-list';
+        this.storageKey = 'to do list';
         this.$addInput = document.querySelector('.addFormWrap input');
     }
+
     initData () {
         const storage = localStorage.getItem(this.storageKey);
         this.toDoDataArr = storage ? JSON.parse(storage) : [];
         return this.toDoDataArr;
     }
+
     getDate() {
         const newDate = new Date(); 
         return `${newDate.getFullYear()}.${newDate.getMonth() + 1}.${newDate.getDate()}`;
     }
+
     saveData() {
         localStorage.setItem(this.storageKey, JSON.stringify(this.toDoDataArr));
     }
-    addData(toDoData) {
-        this.toDoDataArr.push(toDoData);
+
+    addData(data) {
+        this.toDoDataArr.push(data);
         this.saveData();
     }
-    changeData(id) {
-        this.toDoDataArr.find(data => data.id === id);
+
+    changeData({id, key, value}) {
+        const dataToChange = this.toDoDataArr.find(data => data.id === id);
+        const dataIndex = this.toDoDataArr.indexOf(dataToChange);
+        dataToChange[key] = value;
+        this.toDoDataArr[dataIndex] = dataToChange;
         this.saveData();
     }
+
     deleteData(data) {
         this.toDoDataArr = this.toDoDataArr.filter(el => el.txt !== data);
         this.saveData();
     }
 }
 
+
 class ToDoView {
     constructor() {
         this.$addBtn = document.querySelector('.addBtn');
         this.$addInput = document.querySelector('.addFormWrap input');
     }
+
     initView(data) {
         data.forEach((list) => this.renderToDo(list));
     }
+
     renderToDo(list) {
         document.querySelector('.toDoList').appendChild(list);
         this.$addInput.value = "";
     }
+
     deleteToDo(list) {
         list.closest('li').remove();
     }
 }
+
 
 class ToDoController {
     constructor(model, view) {
         this.model = model;
         this.view = view;
     }
+
     initToDo() {
         const storageData = this.model.initData();
         storageData.forEach((el) => this.view.renderToDo(this.addToDo(el))); 
     }
+
     addBtnEvent(e) {
         e.preventDefault();
         const toDoTxt = this.model.$addInput.value;
         if(!toDoTxt) return false;
         const toDoData = {
-            'id': Date.now(),
+            'id': String(Date.now()),
             'txt': toDoTxt,
             'date': this.model.getDate(),
-            'complete': 'incomplete'
+            'completion': 'incompletion'
         };
-        this.model.pushData(toDoData);
+        this.model.addData(toDoData);
         this.view.renderToDo(this.addToDo(toDoData));
     }
+
     initEvent() {
         this.view.$addBtn.addEventListener('click', (e) => {
             this.addBtnEvent(e);
@@ -77,49 +94,60 @@ class ToDoController {
         });
     }
 
-    createCompleteBtn() {
-        const $completeBtn = document.createElement('button');
-        $completeBtn.classList.add('completeBtn');
-        $completeBtn.addEventListener('click', (e) => {
+    completionBtnHandler($li) {
+        const $completionBtn = $li.querySelector('.completionBtn');
+        $completionBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            const target = e.currentTarget;
-            target.closest('li').classList.toggle('complete');
-            this.model.changeData()
+            const completionBtnClass = $li.classList;
+            completionBtnClass.toggle('completion');
+            const completionValue = completionBtnClass.contains('completion') ? 'completion' : 'incompletion';
+            this.model.changeData({id: $li.id, key: 'completion', value: completionValue});
         });
-        return $completeBtn;
+        return $completionBtn;
     }
-    createEditBtn() {
-        const $editBtn = document.createElement('button');
-        $editBtn.classList.add('editBtn');
-        // $editBtn.addEventListener('click', (e) => {
-        //     e.preventDefault();
-        //     const target = e.currentTarget;
-        //     target.parentNode.querySelector();
-        // });
-        return $editBtn;
+
+    editingBtnHandler($li) {
+        const $editingBtn = $li.querySelector('.editingBtn');
+        $editingBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const $txt = $li.querySelector('.txt');
+            if($txt.readOnly) {
+                $txt.focus();
+                $txt.readOnly = false;
+            }
+            else {
+                this.model.changeData({id: $li.id, key: 'txt', value: $txt.value});
+                $txt.readOnly = true;
+            }
+        });
+        return $editingBtn;
     }
-    createDeleteBtn() {
-        const $deleteBtn = document.createElement('button');
-        $deleteBtn.classList.add('deleteBtn');
+
+    deleteBtnHandler($li) {
+        const $deleteBtn = $li.querySelector('.deleteBtn');
         $deleteBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            const dataTodelete = $deleteBtn.closest('li .txt').innerText;
+            const dataTodelete = $li.querySelector('.txt').innerText;
             this.model.deleteData(dataTodelete);
             this.view.deleteToDo($deleteBtn);
         });
         return $deleteBtn;
     }
+
     addToDo(data) {
         const $li = document.createElement('li');
-        $li.id = Date.now();
+        $li.id = data.id;
         $li.innerHTML = `<input type="checkbox">
-                        <span class="txt">${data.txt}</span>
+                        <input type="text" class="txt" value="${data.txt}" readonly>
                         <span class="date">${data.date}</span>
                         <div class="btnWrap">
+                            <button type="button" class="completionBtn"></button>
+                            <button type="button" class="editingBtn"></button>
+                            <button type="button" class="deleteBtn"></button>
                         </div>`;
-        $li.querySelector('.btnWrap').appendChild(this.createCompleteBtn());
-        $li.querySelector('.btnWrap').appendChild(this.createEditBtn());
-        $li.querySelector('.btnWrap').appendChild(this.createDeleteBtn());
+        this.completionBtnHandler($li);
+        this.editingBtnHandler($li);
+        this.deleteBtnHandler($li);
         return $li;
     }
 }
