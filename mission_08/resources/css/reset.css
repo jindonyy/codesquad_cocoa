@@ -201,9 +201,9 @@ textarea {
     outline: none;
     border-radius: 0;
     box-shadow: none;
-    /* -webkit-appearance: none;
+    -webkit-appearance: none;
     -ms-appearance: none;
-    appearance: none; */
+    appearance: none;
     box-sizing: border-box;
 }
 
@@ -269,17 +269,5 @@ textarea:-moz-placeholder {
 }
 
 textarea:-ms-input-placeholder {
-    color: #bec8cc;
-}
-
-input[type="date"]::-webkit-calendar-picker-indicator {
-    background-image: url('../images/common/input_date.png') !important;
-}
-
-input[type="date"]::-ms-calendar-picker-indicator {
-    background-image: url('../images/common/input_date.png') !important;
-}
-
-input[type="date"] {
     color: #bec8cc;
 }
