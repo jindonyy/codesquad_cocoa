@@ -12,6 +12,16 @@ main {
     font-size: 28px;
     text-align: center;
 }
+.accompaniment{
+    width: 150%;
+    position: absolute;
+    top: -20%;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 35px;
+    text-align: center;
+    letter-spacing: 0.4rem;
+}
 .pianoBtn {
     width: 180px;
     height: 160px;
@@ -29,13 +39,21 @@ main {
     /* transition: visible .5s ease 1s; */
 }
 .piano > li {
-    width: 55px;
-    height: 170px;
-    padding: 10px 5px;
-    background: #fff;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     cursor: pointer;
     box-sizing: border-box;
+}
+.piano > li .pitch {
+    width: 55px;
+    height: 170px;
+    padding: 10px 5px;
+    background: #fff;
+    vertical-align: bottom;
+}
+.piano > li .num {
+    height: 26px;
+    margin-top: 20px;
+    font-size: 20px;
 }
