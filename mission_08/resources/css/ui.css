@@ -6,7 +6,7 @@ main {
 }
 .pianoWrap {
     position: absolute;
-    top: 50%;
+    top: calc(50% + 50px);
     left: 50%;
     transform: translate(-50%, -50%);
     font-size: 28px;
@@ -25,13 +25,12 @@ main {
 .pianoBtn {
     width: 180px;
     height: 160px;
-    margin-bottom: 30px;
+    margin-bottom: 10%;
     font-size: 120px;
 }
 .piano {
     display: flex;
     flex-direction: row;
-    gap: 7px;
     visibility: hidden;
 }
 .piano.visible {
@@ -46,11 +45,41 @@ main {
     box-sizing: border-box;
 }
 .piano > li .pitch {
-    width: 55px;
-    height: 170px;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    width: 65px;
+    height: 210px;
     padding: 10px 5px;
     background: #fff;
-    vertical-align: bottom;
+    border: 3px solid #000;
+    border-left: 0;
+}
+.piano > li .pitch:after {
+    content: '';
+    display: block;
+    width: 64%;
+    height: 60%;
+    position: absolute;
+    top: 0;
+    left: 71%;
+    background: #000;
+    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 4px;
+    z-index: 1;
+}
+.piano > li:nth-child(3) .pitch:after, .piano > li:nth-child(7) .pitch:after {
+    content: none;
+}
+.piano > li:first-child .pitch {
+    border-left: 3px solid #000;
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
+}
+.piano > li:last-child .pitch {
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
 }
 .piano > li .num {
     height: 26px;
