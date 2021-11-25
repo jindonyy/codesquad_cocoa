@@ -13,8 +13,8 @@ class PianoViewController {
 
     updateAccompaniment(keyName) {
         const $accompaniment = document.querySelector('.accompaniment');
-        
-        if(this.accompaniment.length > 20) {
+
+        if(this.accompaniment.length >= 20) {
             this.accompaniment = this.accompaniment.slice(1);
         }
         this.accompaniment += keyName;
@@ -49,25 +49,16 @@ class PianoEventHandler {
     setPianoBtnEvent() {
         const $pianoBtn = document.querySelector('.pianoBtn');
         const $piano = document.querySelector('.piano');
+        let timer;
 
         $pianoBtn.addEventListener('mouseenter', () => {
-            setTimeout(() => {
+            timer = setTimeout(() => {
                 this.view.showPiano($piano);
             }, 1000);
         });
-    }
-
-    setTimeoutOnPiano(e) {
-        const target = e.currentTarget;
-
-        if(!mouseThrottling) {
-            mouseThrottling = setTimeout(() => {
-                mouseThrottling = null;
-                const onMouseKeyCount = this.data.countOnMouseKey(target.querySelector('.pitch').innerText);
-                console.log(onMouseKeyCount)
-                this.view.updateOnMouseKey(target, onMouseKeyCount);
-            }, 1000);
-        }
+        $pianoBtn.addEventListener('mouseleave', () => {
+            clearTimeout(timer);
+        });
     }
 
     setPianoKeyEvent() {
@@ -80,11 +71,11 @@ class PianoEventHandler {
                 const keyName = target.querySelector('.pitch').innerText;
 
                 if(!mouseThrottling) {
+                    const onMouseKeyCount = this.data.countOnMouseKey(keyName);
+                    this.view.updateAccompaniment(keyName);
+                    this.view.updateOnMouseKey(target, onMouseKeyCount);
                     mouseThrottling = setTimeout(() => {
                         mouseThrottling = null;
-                        const onMouseKeyCount = this.data.countOnMouseKey(keyName);
-                        this.view.updateAccompaniment(keyName);
-                        this.view.updateOnMouseKey(target, onMouseKeyCount);
                     }, 500);
                 }
             });
