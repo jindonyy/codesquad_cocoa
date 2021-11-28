@@ -11,13 +11,13 @@ class PianoViewController {
         pianoKey.querySelector('.num').innerText = count;
     }
 
-    updateAccompaniment(keyName) {
+    updateAccompaniment(piaonKeyName) {
         const $accompaniment = document.querySelector('.accompaniment');
 
         if(this.accompaniment.length >= 20) {
             this.accompaniment = this.accompaniment.slice(1);
         }
-        this.accompaniment += keyName;
+        this.accompaniment += piaonKeyName;
         $accompaniment.innerText = this.accompaniment;
     }
 }
@@ -25,17 +25,17 @@ class PianoViewController {
 
 class PianoDataManager {
     constructor() {
-        this.keys = {};
+        this.pianoKeys = {};
     }
 
-    countOnMouseKey(keyName) {
-        if(this.keys.hasOwnProperty(keyName)) {
-            this.keys[keyName] += 1;
+    countOnMouseKey(piaonKeyName) {
+        if(this.pianoKeys.hasOwnProperty(piaonKeyName)) {
+            this.pianoKeys[piaonKeyName] += 1;
         } else {
-            this.keys[keyName] = 1;
+            this.pianoKeys[piaonKeyName] = 1;
         }
 
-        return this.keys[keyName];
+        return this.pianoKeys[piaonKeyName];
     }
 }
 
@@ -49,12 +49,13 @@ class PianoEventHandler {
     setPianoBtnEvent() {
         const $pianoBtn = document.querySelector('.pianoBtn');
         const $piano = document.querySelector('.piano');
+        const enterTime = 1000;
         let timer;
 
         $pianoBtn.addEventListener('mouseenter', () => {
             timer = setTimeout(() => {
                 this.view.showPiano($piano);
-            }, 1000);
+            }, enterTime);
         });
         $pianoBtn.addEventListener('mouseleave', () => {
             clearTimeout(timer);
@@ -63,21 +64,21 @@ class PianoEventHandler {
 
     setPianoKeyEvent() {
         const $pianoKey = document.querySelectorAll('.piano li');
+        const moveTime = 500;
         
         $pianoKey.forEach(el => {
             let mouseThrottling = null;
             el.addEventListener('mousemove', (e) => {
                 const target = e.currentTarget;
-                const keyName = target.querySelector('.pitch').innerText;
+                const piaonKeyName = target.querySelector('.pitch').innerText;
 
-                if(!mouseThrottling) {
-                    const onMouseKeyCount = this.data.countOnMouseKey(keyName);
-                    this.view.updateAccompaniment(keyName);
-                    this.view.updateOnMouseKey(target, onMouseKeyCount);
-                    mouseThrottling = setTimeout(() => {
-                        mouseThrottling = null;
-                    }, 500);
-                }
+                if(mouseThrottling) return false;
+                const onMouseKeyCount = this.data.countOnMouseKey(piaonKeyName);
+                this.view.updateAccompaniment(piaonKeyName);
+                this.view.updateOnMouseKey(target, onMouseKeyCount);
+                mouseThrottling = setTimeout(() => {
+                    mouseThrottling = null;
+                }, moveTime);
             });
         })
     }
