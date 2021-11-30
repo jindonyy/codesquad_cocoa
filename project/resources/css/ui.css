@@ -114,10 +114,9 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 35px;
-    height: 35px;
-    border-radius: 50%;
-    background: var(--logo-yellow) url('../images/common/ico_check.png') no-repeat center / auto 12px;
+    width: 24px;
+    height: 18px;
+    background: url('../images/common/ico_check.png') no-repeat center / auto 100%;
     font-size: 1rem;
     font-weight: var(--medium);
     text-align: center;
