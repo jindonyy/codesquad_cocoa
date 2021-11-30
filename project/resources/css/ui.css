@@ -108,8 +108,8 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 30px;
-    height: 30px;
+    width: 35px;
+    height: 35px;
     border-radius: 50%;
     background: var(--logo-yellow) url('../images/common/ico_check.png') no-repeat center / auto 12px;
     font-size: 1rem;
@@ -130,26 +130,26 @@
     font-weight: var(--medium);
 }
 
-.prd-info-wrap {
+.prd-detail-wrap {
     display: none;
     position: relative;
     height: 280px;
     border-top: 1px solid var(--light-gray);
 }
-.contents.detail .prd-info-wrap {
+.contents.detail .prd-detail-wrap {
     display: flex;
 }
-.prd-info-wrap .prd-detail-img {
+.prd-detail-wrap .prd-detail-img {
     width: 320px;
     flex: 0 0 auto;
     overflow: hidden;
 }
-.prd-info-wrap .prd-detail-img img {
+.prd-detail-wrap .prd-detail-img img {
     width: 360px;
     max-width: none;
     margin-left: -20px;
 }
-.prd-info-wrap .prd-info {
+.prd-detail-wrap .prd-detail {
     height: 100%;
     padding: 40px 0;
     display: flex;
@@ -157,19 +157,19 @@
     justify-content: space-between;
     gap: 10px;
 }
-.prd-info-wrap .prd-name {
+.prd-detail-wrap .prd-name {
     font-size: 1.45rem;
     font-weight: 600;
 }
-.prd-info-wrap .prd-text {
+.prd-detail-wrap .prd-text {
     margin-right: 200px;
     flex: 1;
 }
-.prd-info-wrap .prd-info-btn button {
+.prd-detail-wrap .prd-info-btn button {
     font-size: 1.1rem;
     font-weight: var(--medium);
 }
-.prd-info-wrap .prd-info-btn button:after {
+.prd-detail-wrap .prd-info-btn button:after {
     content: '+';
     display: inline-block;
     width: 25px;
@@ -181,16 +181,16 @@
     color: var(--color-white);
     line-height: 1.4;
 }
-.prd-info-wrap .prd-nutrition-btn {
+.prd-detail-wrap .prd-nutrition-btn {
     margin-right: 20px;
 }
-.prd-info-wrap .prd-nutrition-btn:after {
+.prd-detail-wrap .prd-nutrition-btn:after {
     background: var(--btn-yellow);
 }
-.prd-info-wrap .prd-ingredient-btn:after {
+.prd-detail-wrap .prd-ingredient-btn:after {
     background: var(--btn-red);
 }
-.prd-info-wrap .prd-add-btn {
+.prd-detail-wrap .prd-add-btn {
     position: absolute;
     top: 40px;
     right: 30px;
@@ -204,6 +204,8 @@
 
 .aside {
     width: 310px;
+    height: calc(100vh - 147px);
+    max-height: 653px;
     margin-bottom: 50px;
 }
 .receipt-box {
