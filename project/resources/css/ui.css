@@ -37,7 +37,10 @@
     padding: 25px 0;
     display: flex;
     align-items: center;
-    gap: 40px;
+    gap: 35px;
+}
+#header .logo {
+    width: 45px;
 }
 #header .menu-tab {
     display: flex;
@@ -55,6 +58,9 @@
     display: block;
     height: 2px;
     background: var(--logo-yellow);
+}
+#header .menu-item.on:after {
+    background: var(--logo-red);
 }
 #header .menu-item:hover:after, #header .menu-item.on:after {
     width: 100%;
