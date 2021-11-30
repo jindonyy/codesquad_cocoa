@@ -216,6 +216,7 @@ class productDataManager {
     }
 }
 
+
 class productViewHandler {
     prdListTemplate(prd) {
         const prdPriceStr = prd.get('price').toString();
@@ -225,7 +226,7 @@ class productViewHandler {
                         <img src="resources/images/product/${prd.get('code')}_small.png" alt="">
                     </div>
                     <div class="text-wrap">
-                        <div class="prd-prdName">${prd.get('prdName')}</div>
+                        <div class="prd-name">${prd.get('prdName')}</div>
                         <div class="prd-price">${prdPriceStr.slice(0, -3)},${prdPriceStr.slice(-3)}원</div>
                     </div>
                 </li>`;
@@ -239,8 +240,18 @@ class productViewHandler {
         });
     
         $('.prd-list').innerHTML = prdList;
+        PrdListEventController.prototype.addPrdListEvent.call(menuList);
+    }
+
+    showPrdDetail(prdInfo) {
+        $('.contents').classList.add('detail');
+        console.log(this)
+        $('.prd-detail-wrap .prd-detail-img').innerHTML = `<img src="resources/images/product/${prdInfo.get('code')}_big.png">`;
+        $('.prd-detail-wrap .prd-name').innerText = prdInfo.get('prdName');
+        $('.prd-detail-wrap .prd-text').innerText = prdInfo.get('description');
     }
 }
+
 
 class MenuTabEventController {
     constructor(data, view) {
@@ -262,22 +273,30 @@ class MenuTabEventController {
     }
 
     initPrdList() {
-        this.view.addPrdList(this.data.productsData.get('burger'));
         this.addMenuTabEvent();
+        this.view.addPrdList(this.data.productsData.get('burger'));
     }
 }
 
 
 class PrdListEventController {
-    constructor($) {
-        
+    constructor(data, view) {
+        this.data = data;
+        this.view = view;
     }
 
-    initPrdList() {
-
+    addPrdListEvent() {
+        $('.prd-list').addEventListener('click', e => {
+            const target = e.target;
+            const menu = this.data.productsData.get(`${menuTab.currentMenu.dataset.menu}`)
+            const prdInfo = menu.get(`${target.closest('li').dataset.prdcode}`);
+            
+            this.view.showPrdDetail(prdInfo);
+        });
     }
 }
 
-const menuTab = new MenuTabEventController(new productDataManager(), new productViewHandler());
 
+const menuTab = new MenuTabEventController(new productDataManager(), new productViewHandler());
+const menuList = new PrdListEventController(new productDataManager(), new productViewHandler());
 menuTab.initPrdList();
