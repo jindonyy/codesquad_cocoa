@@ -37,10 +37,10 @@
     padding: 25px 0;
     display: flex;
     align-items: center;
-    gap: 35px;
+    gap: 30px;
 }
 #header .logo {
-    width: 45px;
+    width: 50px;
 }
 #header .menu-tab {
     display: flex;
@@ -54,16 +54,14 @@
 }
 #header .menu-item:after {
     content: '';
-    width: 0;
     display: block;
+    width: 0;
     height: 2px;
+    margin: 0 -2px;
     background: var(--logo-yellow);
 }
 #header .menu-item.on:after {
-    background: var(--logo-red);
-}
-#header .menu-item:hover:after, #header .menu-item.on:after {
-    width: 100%;
+    width: calc(100% + 4px);
     transition: all .15s ease-in;
 }
 
