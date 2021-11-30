@@ -1,5 +1,6 @@
-// import { ProductInfo } from "./producr_info.js";
+// import { ProductData } from "./producr_data.js";
 const $ = (selector) => document.querySelector(selector);
+const $$ = (selector) => document.querySelectorAll(selector);
 
 class productDataManager {
     constructor() {
@@ -216,15 +217,16 @@ class productDataManager {
 }
 
 class productViewHandler {
-    prdListTemplate(product) {
-        const prdPriceStr = product.get('price').toString();
-        return `<li data-prdName="${product.get('prdName')}" data-price="${prdPriceStr}" data-prdCode="${product.get('code')}">
+    prdListTemplate(prd) {
+        const prdPriceStr = prd.get('price').toString();
+
+        return `<li data-prdcode="${prd.get('code')}">
                     <div class="img-wrap">
-                        <img src="resources/images/product/${product.get('code')}_small.png" alt="">
+                        <img src="resources/images/product/${prd.get('code')}_small.png" alt="">
                     </div>
                     <div class="text-wrap">
-                        <div class="prd-prdName">${product.get('prdName')}</div>
-                        <div class="prd-price">${prdPriceStr.slice(0, -3)},${prdPriceStr.slice(-3, -1)}원</div>
+                        <div class="prd-prdName">${prd.get('prdName')}</div>
+                        <div class="prd-price">${prdPriceStr.slice(0, -3)},${prdPriceStr.slice(-3)}원</div>
                     </div>
                 </li>`;
     }
@@ -232,8 +234,8 @@ class productViewHandler {
     addPrdList(menu) {
         let prdList = "";
     
-        menu.forEach(product => {
-            prdList += this.prdListTemplate(product);
+        menu.forEach(prd => {
+            prdList += this.prdListTemplate(prd);
         });
     
         $('.prd-list').innerHTML = prdList;
@@ -244,10 +246,24 @@ class MenuTabEventController {
     constructor(data, view) {
         this.data = data;
         this.view = view;
+        this.currentMenu = $$('.menu-item')[0];
+    }
+
+    addMenuTabEvent() {
+        $$('.menu-item').forEach(menu => {
+            menu.addEventListener('click', (e) => {
+                this.currentMenu.classList.remove('on');
+                this.currentMenu = e.currentTarget;
+                this.currentMenu.classList.add('on');
+                this.view.addPrdList(this.data.productsData.get(this.currentMenu.dataset.menu));
+                $('.contents').classList.remove('detail');
+            });
+        });
     }
 
     initPrdList() {
-        this.view.addPrdList(this.data.productsInfo.get('burger'));
+        this.view.addPrdList(this.data.productsData.get('burger'));
+        this.addMenuTabEvent();
     }
 }
 
@@ -262,5 +278,6 @@ class PrdListEventController {
     }
 }
 
-const menuTab = new MenuTabEventController(new productInfoManager(), new productViewHandler());
+const menuTab = new MenuTabEventController(new productDataManager(), new productViewHandler());
+
 menuTab.initPrdList();
