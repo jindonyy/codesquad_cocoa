@@ -217,7 +217,15 @@ class productDataManager {
 }
 
 
-class productViewHandler {
+class OrderDataManger {
+    constructor() {
+        this.orderData = new Map([]);
+        this.selectedMenu = $$('.menu-item')[0].dataset.menu;
+    }
+}
+
+
+class ProductListViewHandler {
     prdListTemplate(prd) {
         const prdPriceStr = prd.get('price').toString();
 
@@ -240,12 +248,13 @@ class productViewHandler {
         });
     
         $('.prd-list').innerHTML = prdList;
-        PrdListEventController.prototype.addPrdListEvent.call(menuList);
     }
+}
 
+
+class ProductDetailViewHandler {
     showPrdDetail(prdInfo) {
         $('.contents').classList.add('detail');
-        console.log(this)
         $('.prd-detail-wrap .prd-detail-img').innerHTML = `<img src="resources/images/product/${prdInfo.get('code')}_big.png">`;
         $('.prd-detail-wrap .prd-name').innerText = prdInfo.get('prdName');
         $('.prd-detail-wrap .prd-text').innerText = prdInfo.get('description');
@@ -254,49 +263,87 @@ class productViewHandler {
 
 
 class MenuTabEventController {
-    constructor(data, view) {
-        this.data = data;
-        this.view = view;
-        this.currentMenu = $$('.menu-item')[0];
+    constructor({prdData, orderData}, {prdListView, prdDetailView}) {
+        this.prdData = prdData;
+        this.orderData = orderData;
+        this.prdListView = prdListView;
+        this.prdDetailView = prdDetailView;
+        this.selectedMenuItem = $$('.menu-item')[0];
     }
 
     addMenuTabEvent() {
         $$('.menu-item').forEach(menu => {
             menu.addEventListener('click', (e) => {
-                this.currentMenu.classList.remove('on');
-                this.currentMenu = e.currentTarget;
-                this.currentMenu.classList.add('on');
-                this.view.addPrdList(this.data.productsData.get(this.currentMenu.dataset.menu));
+                e.preventDefault();
+                this.selectedMenuItem.classList.remove('on');
+                this.selectedMenuItem = e.currentTarget;
+                this.orderData.selectedMenu = this.selectedMenuItem.dataset.menu;
+                this.selectedMenuItem.classList.add('on');
+                this.prdListView.addPrdList(this.prdData.productsData.get(this.orderData.selectedMenu));
+                PrdListEventController.prototype.addPrdListEvent.call(productList);
                 $('.contents').classList.remove('detail');
             });
         });
     }
 
-    initPrdList() {
+    initMenuTab() {
         this.addMenuTabEvent();
-        this.view.addPrdList(this.data.productsData.get('burger'));
     }
 }
 
 
 class PrdListEventController {
-    constructor(data, view) {
-        this.data = data;
-        this.view = view;
+    constructor({prdData, orderData}, {prdListView, prdDetailView}) {
+        this.prdData = prdData;
+        this.orderData = orderData;
+        this.prdListView = prdListView;
+        this.prdDetailView = prdDetailView;
     }
 
     addPrdListEvent() {
         $('.prd-list').addEventListener('click', e => {
             const target = e.target;
-            const menu = this.data.productsData.get(`${menuTab.currentMenu.dataset.menu}`)
+            const menu = this.prdData.productsData.get(`${this.orderData.selectedMenu}`);
             const prdInfo = menu.get(`${target.closest('li').dataset.prdcode}`);
             
-            this.view.showPrdDetail(prdInfo);
+            this.prdDetailView.showPrdDetail(prdInfo);
         });
+    }
+
+    initPrdList() {
+        this.prdListView.addPrdList(this.prdData.productsData.get(this.orderData.selectedMenu));
+        this.addPrdListEvent();
     }
 }
 
 
-const menuTab = new MenuTabEventController(new productDataManager(), new productViewHandler());
-const menuList = new PrdListEventController(new productDataManager(), new productViewHandler());
-menuTab.initPrdList();
+class PrdDetailEventController {
+    constructor({prdData, orderData}, {prdListView, prdDetailView}) {
+        this.prdData = prdData;
+        this.orderData = orderData;
+        this.prdListView = prdListView;
+        this.prdDetailView = prdDetailView;
+    }
+
+    addBtnToAddEvent() {
+        $('.prd-add-btn').addEventListener('click', e => {
+            e.preventDefault();
+            const menu = this.prdData.get(this.orderData.selectedMenu);
+            
+        });
+    }
+
+    ini
+}
+
+const productData = new productDataManager();
+const orderData = new OrderDataManger();
+const productListView = new ProductListViewHandler();
+const productDetailView = new ProductDetailViewHandler();
+const menuTab = new MenuTabEventController({'prdData': productData, 'orderData': orderData},
+                                            {'prdListView': productListView, 'prdDetailView': productDetailView});
+const productList = new PrdListEventController({'prdData': productData, 'orderData': orderData},
+                                            {'prdListView': productListView, 'prdDetailView': productDetailView});
+
+menuTab.initMenuTab();
+productList.initPrdList();
