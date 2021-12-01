@@ -219,7 +219,8 @@ class productDataManager {
 
 class OrderDataManger {
     constructor() {
-        this.orderData = new Map([]);
+        this.orderList = new Map([]);
+        this.amount = 0;
         this.selectedMenu = $$('.menu-item')[0].dataset.menu;
     }
 }
@@ -253,11 +254,30 @@ class ProductListViewHandler {
 
 
 class ProductDetailViewHandler {
-    showPrdDetail(prdInfo) {
+    showPrdDetail(seletedPrdData) {
         $('.contents').classList.add('detail');
-        $('.prd-detail-wrap .prd-detail-img').innerHTML = `<img src="resources/images/product/${prdInfo.get('code')}_big.png">`;
-        $('.prd-detail-wrap .prd-name').innerText = prdInfo.get('prdName');
-        $('.prd-detail-wrap .prd-text').innerText = prdInfo.get('description');
+        $('.prd-detail-wrap .prd-detail-img').innerHTML = `<img src="resources/images/product/${seletedPrdData.get('code')}_big.png">`;
+        $('.prd-detail-wrap .prd-name').innerText = seletedPrdData.get('prdName');
+        $('.prd-detail-wrap .prd-text').innerText = seletedPrdData.get('description');
+    }
+}
+
+
+class ReceiptViewHandler {
+    orderListTemplate(prdName, orderQuantity) {
+        return `<li>
+                    <span class="order-prd-name">${prdName}</span>
+                    <div class="quantity-wrap">
+                        <button class="plus-btn" type="button">+</button>
+                        <span class="order-quantity">${orderQuantity}</span>
+                        <button class="minus-btn" type="button">-</button>
+                    </div>
+                </li>`;
+    }
+
+    updateReceipt({prdName, orderQuantity, amount}) {
+        $('.order-list ul').innerHTML += this.orderListTemplate(prdName, orderQuantity);
+        $('.receipt-box .price-num').innerText = amount;
     }
 }
 
@@ -330,12 +350,28 @@ class PrdDetailEventController {
     addBtnToAddEvent() {
         $('.prd-add-btn').addEventListener('click', e => {
             e.preventDefault();
-            const menu = this.prdData.get(this.orderData.selectedMenu);
-            
+            const target = e.currentTarget;
+            const selectedPrdCode = target.dataset.code;
+            const selectedMenu = this.orderData.selectedMenu;
+            const selectedMenuData = this.prdData.productsData.get(selectedMenu);
+            const selectedPrdData = selectedMenuData.get(selectedPrdCode);
+            const orderList = this.orderData.orderList;
+            let orderQuantity = orderList.get(selectedPrdCode);
+
+            orderQuantity ? orderQuantity += 1 : orderQuantity = 1;
+            this.orderData.amount += selectedPrdData.get('price');
+            orderList.set(selectedPrdCode, orderQuantity);
+            this.receiptView.updateReceipt({
+                'prdName': selectedPrdData.get('prdName'),
+                'orderQuantity': orderQuantity,
+                'amount': this.orderData.amount
+            });
         });
     }
 
-    ini
+    initAddBtn() {
+        this.addBtnToAddEvent();
+    }
 }
 
 const productData = new productDataManager();
