@@ -235,7 +235,9 @@ class OrderDataManger {
     updateOrderList(selectedPrdCode) {
         let orderQuantity = this.orderList.get(selectedPrdCode);
         orderQuantity ? orderQuantity += 1 : orderQuantity = 1;
+
         this.orderList.set(selectedPrdCode, orderQuantity);
+
         return orderQuantity;
     }
 
@@ -280,9 +282,9 @@ class ProductListViewHandler {
 
 
 class ReceiptViewHandler {
-    orderListTemplate(prdName, orderQuantity) {
-        return `<li>
-                    <span class="order-prd-name">${prdName}</span>
+    orderListTemplate(selectedPrdData, orderQuantity) {
+        return `<li data-code="${selectedPrdData.get('code')}">
+                    <span class="order-prd-name">${selectedPrdData.get('prdName')}</span>
                     <div class="quantity-wrap">
                         <button class="plus-btn" type="button">+</button>
                         <span class="order-quantity">${orderQuantity}</span>
@@ -291,8 +293,15 @@ class ReceiptViewHandler {
                 </li>`;
     }
 
-    updateReceipt({prdName, orderQuantity, amount}) {
-        $('.order-list ul').innerHTML += this.orderListTemplate(prdName, orderQuantity);
+    addOrderList(selectedPrdData, orderQuantity) {
+        $('.order-list ul').innerHTML += this.orderListTemplate(selectedPrdData, orderQuantity);
+    }
+
+    changeOrderQuantity(selectedPrdCode, orderQuantity) {
+        $(`.order-list li[data-code=${selectedPrdCode}] .order-quantity`).innerText = orderQuantity;
+    }
+    
+    updateAmountView(amount) {
         $('.receipt-box .price-num').innerText = changeToNumberNotation(amount);
     }
 }
@@ -316,6 +325,7 @@ class MenuTabEventController {
                 this.selectedMenuItem.classList.add('on');
                 const selectedMenu = this.orderData.selectedMenu;
                 const selectedMenuData = this.prdData.productsData.get(selectedMenu);
+
                 this.prdListView.addPrdList(selectedMenuData);
                 PrdListEventController.prototype.addPrdListEvent.call(productList);
                 $('.contents').classList.remove('detail');
@@ -331,26 +341,28 @@ class MenuTabEventController {
 
 
 class PrdListEventController {
-    constructor({prdData, orderData}, prdDetailView) {
+    constructor({prdData, orderData}, {prdListView, receiptView}) {
         this.prdData = prdData;
         this.orderData = orderData;
-        this.prdDetailView = prdDetailView;
+        this.prdListView = prdListView;
+        this.receiptView = receiptView;
     }
 
     addPrdListEvent() {
         $('.prd-list').addEventListener('click', e => {
+            e.preventDefault();
             const target = e.target;
             const selectedMenu = this.orderData.selectedMenu;
             const selectedMenuData = this.prdData.productsData.get(selectedMenu);
             const prdCode = target.closest('li').dataset.prdcode;
             const seletedPrdData = selectedMenuData.get(prdCode);
             
-            this.prdDetailView.showPrdDetail(seletedPrdData);
+            this.prdListView.showPrdDetail(seletedPrdData);
             $('.prd-add-btn').dataset.code = prdCode;
         });
     }
 
-    addBtnToAddEvent() {
+    addEventToAddBtn() {
         $('.prd-add-btn').addEventListener('click', e => {
             e.preventDefault();
             const target = e.currentTarget;
@@ -361,25 +373,29 @@ class PrdListEventController {
 
             const orderQuantity = this.orderData.updateOrderList(selectedPrdCode);
             const amount = this.orderData.updateAmount(selectedPrdData.get('price'));
-            this.receiptView.updateReceipt({
-                'prdName': selectedPrdData.get('prdName'),
-                'orderQuantity': orderQuantity,
-                'amount': amount
-            });
+
+            if(orderQuantity === 1) {
+                this.receiptView.addOrderList(selectedPrdData, orderQuantity);
+            } else {
+                this.receiptView.changeOrderQuantity(selectedPrdCode, orderQuantity);
+            }
+            this.receiptView.updateAmountView(amount);
         });
     }
 
     initPrdList() {
         this.addPrdListEvent();
-        this.addBtnToAddEvent();
+        this.addEventToAddBtn();
     }
 }
 
 
 const productData = new productDataManager();
 const orderData = new OrderDataManger();
-const menuTab = new MenuTabEventController({'prdData': productData, 'orderData': orderData}, new ProductListViewHandler());
-const productList = new PrdListEventController({'prdData': productData, 'orderData': orderData}, new ProductListViewHandler());
+const menuTab = new MenuTabEventController({'prdData': productData, 'orderData': orderData},
+                                            new ProductListViewHandler());
+const productList = new PrdListEventController({'prdData': productData, 'orderData': orderData},
+                                            {'prdListView': new ProductListViewHandler(), 'receiptView': new ReceiptViewHandler()});
 
 menuTab.initMenuTab();
 productList.initPrdList();
