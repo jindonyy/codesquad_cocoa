@@ -1,6 +1,14 @@
-// import { ProductData } from "./producr_data.js";
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => document.querySelectorAll(selector);
+const changeToNumberNotation = function(num) {
+    const numArr = num.toString().split('');
+
+    for(let i = numArr.length-3; i > 0; i -= 3) {
+        numArr[i] = `,${numArr[i]}`;
+    }
+
+    return numArr.join('');
+}
 
 class productDataManager {
     constructor() {
@@ -236,7 +244,7 @@ class ProductListViewHandler {
                     </div>
                     <div class="text-wrap">
                         <div class="prd-name">${prd.get('prdName')}</div>
-                        <div class="prd-price">${prdPriceStr.slice(0, -3)},${prdPriceStr.slice(-3)}원</div>
+                        <div class="prd-price">${changeToNumberNotation(prdPriceStr)}원</div>
                     </div>
                 </li>`;
     }
@@ -277,7 +285,7 @@ class ReceiptViewHandler {
 
     updateReceipt({prdName, orderQuantity, amount}) {
         $('.order-list ul').innerHTML += this.orderListTemplate(prdName, orderQuantity);
-        $('.receipt-box .price-num').innerText = amount;
+        $('.receipt-box .price-num').innerText = changeToNumberNotation(amount);
     }
 }
 
