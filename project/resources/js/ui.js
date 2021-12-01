@@ -272,11 +272,11 @@ class ProductListViewHandler {
         $('.prd-list').innerHTML = prdList;
     }
 
-    showPrdDetail(seletedPrdData) {
+    showPrdDetail(selectedPrdData) {
         $('.contents').classList.add('detail');
-        $('.prd-detail-wrap .prd-detail-img').innerHTML = `<img src="resources/images/product/${seletedPrdData.get('code')}_big.png">`;
-        $('.prd-detail-wrap .prd-name').innerText = seletedPrdData.get('prdName');
-        $('.prd-detail-wrap .prd-text').innerText = seletedPrdData.get('description');
+        $('.prd-detail-wrap .prd-detail-img').innerHTML = `<img src="resources/images/product/${selectedPrdData.get('code')}_big.png">`;
+        $('.prd-detail-wrap .prd-name').innerText = selectedPrdData.get('prdName');
+        $('.prd-detail-wrap .prd-text').innerText = selectedPrdData.get('description');
     }
 }
 
@@ -355,9 +355,9 @@ class PrdListEventController {
             const selectedMenu = this.orderData.selectedMenu;
             const selectedMenuData = this.prdData.productsData.get(selectedMenu);
             const prdCode = target.closest('li').dataset.prdcode;
-            const seletedPrdData = selectedMenuData.get(prdCode);
+            const selectedPrdData = selectedMenuData.get(prdCode);
             
-            this.prdListView.showPrdDetail(seletedPrdData);
+            this.prdListView.showPrdDetail(selectedPrdData);
             $('.prd-add-btn').dataset.code = prdCode;
         });
     }
