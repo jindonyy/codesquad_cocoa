@@ -263,11 +263,10 @@ class ProductDetailViewHandler {
 
 
 class MenuTabEventController {
-    constructor({prdData, orderData}, {prdListView, prdDetailView}) {
+    constructor({prdData, orderData}, prdListView) {
         this.prdData = prdData;
         this.orderData = orderData;
         this.prdListView = prdListView;
-        this.prdDetailView = prdDetailView;
         this.selectedMenuItem = $$('.menu-item')[0];
     }
 
@@ -279,7 +278,9 @@ class MenuTabEventController {
                 this.selectedMenuItem = e.currentTarget;
                 this.orderData.selectedMenu = this.selectedMenuItem.dataset.menu;
                 this.selectedMenuItem.classList.add('on');
-                this.prdListView.addPrdList(this.prdData.productsData.get(this.orderData.selectedMenu));
+                const selectedMenu = this.orderData.selectedMenu;
+                const selectedMenuData = this.prdData.productsData.get(selectedMenu);
+                this.prdListView.addPrdList(selectedMenuData);
                 PrdListEventController.prototype.addPrdListEvent.call(productList);
                 $('.contents').classList.remove('detail');
             });
@@ -287,42 +288,43 @@ class MenuTabEventController {
     }
 
     initMenuTab() {
+        this.prdListView.addPrdList(this.prdData.productsData.get(this.orderData.selectedMenu));
         this.addMenuTabEvent();
     }
 }
 
 
 class PrdListEventController {
-    constructor({prdData, orderData}, {prdListView, prdDetailView}) {
+    constructor({prdData, orderData}, prdDetailView) {
         this.prdData = prdData;
         this.orderData = orderData;
-        this.prdListView = prdListView;
         this.prdDetailView = prdDetailView;
     }
 
     addPrdListEvent() {
         $('.prd-list').addEventListener('click', e => {
             const target = e.target;
-            const menu = this.prdData.productsData.get(`${this.orderData.selectedMenu}`);
-            const prdInfo = menu.get(`${target.closest('li').dataset.prdcode}`);
+            const selectedMenu = this.orderData.selectedMenu;
+            const selectedMenuData = this.prdData.productsData.get(selectedMenu);
+            const prdCode = target.closest('li').dataset.prdcode;
+            const seletedPrdData = selectedMenuData.get(prdCode);
             
-            this.prdDetailView.showPrdDetail(prdInfo);
+            this.prdDetailView.showPrdDetail(seletedPrdData);
+            $('.prd-add-btn').dataset.code = prdCode;
         });
     }
 
     initPrdList() {
-        this.prdListView.addPrdList(this.prdData.productsData.get(this.orderData.selectedMenu));
         this.addPrdListEvent();
     }
 }
 
 
 class PrdDetailEventController {
-    constructor({prdData, orderData}, {prdListView, prdDetailView}) {
+    constructor({prdData, orderData}, receiptView) {
         this.prdData = prdData;
         this.orderData = orderData;
-        this.prdListView = prdListView;
-        this.prdDetailView = prdDetailView;
+        this.receiptView = receiptView;
     }
 
     addBtnToAddEvent() {
@@ -338,12 +340,10 @@ class PrdDetailEventController {
 
 const productData = new productDataManager();
 const orderData = new OrderDataManger();
-const productListView = new ProductListViewHandler();
-const productDetailView = new ProductDetailViewHandler();
-const menuTab = new MenuTabEventController({'prdData': productData, 'orderData': orderData},
-                                            {'prdListView': productListView, 'prdDetailView': productDetailView});
-const productList = new PrdListEventController({'prdData': productData, 'orderData': orderData},
-                                            {'prdListView': productListView, 'prdDetailView': productDetailView});
+const menuTab = new MenuTabEventController({'prdData': productData, 'orderData': orderData}, new ProductListViewHandler());
+const productList = new PrdListEventController({'prdData': productData, 'orderData': orderData}, new ProductDetailViewHandler());
+const productDatail = new PrdDetailEventController({'prdData': productData, 'orderData': orderData}, new ReceiptViewHandler());
 
 menuTab.initMenuTab();
 productList.initPrdList();
+productDatail.initAddBtn();
