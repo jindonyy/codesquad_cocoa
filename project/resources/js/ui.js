@@ -269,10 +269,7 @@ class ProductListViewHandler {
     
         $('.prd-list').innerHTML = prdList;
     }
-}
 
-
-class ProductDetailViewHandler {
     showPrdDetail(seletedPrdData) {
         $('.contents').classList.add('detail');
         $('.prd-detail-wrap .prd-detail-img').innerHTML = `<img src="resources/images/product/${seletedPrdData.get('code')}_big.png">`;
@@ -353,19 +350,6 @@ class PrdListEventController {
         });
     }
 
-    initPrdList() {
-        this.addPrdListEvent();
-    }
-}
-
-
-class PrdDetailEventController {
-    constructor({prdData, orderData}, receiptView) {
-        this.prdData = prdData;
-        this.orderData = orderData;
-        this.receiptView = receiptView;
-    }
-
     addBtnToAddEvent() {
         $('.prd-add-btn').addEventListener('click', e => {
             e.preventDefault();
@@ -385,17 +369,17 @@ class PrdDetailEventController {
         });
     }
 
-    initAddBtn() {
+    initPrdList() {
+        this.addPrdListEvent();
         this.addBtnToAddEvent();
     }
 }
 
+
 const productData = new productDataManager();
 const orderData = new OrderDataManger();
 const menuTab = new MenuTabEventController({'prdData': productData, 'orderData': orderData}, new ProductListViewHandler());
-const productList = new PrdListEventController({'prdData': productData, 'orderData': orderData}, new ProductDetailViewHandler());
-const productDatail = new PrdDetailEventController({'prdData': productData, 'orderData': orderData}, new ReceiptViewHandler());
+const productList = new PrdListEventController({'prdData': productData, 'orderData': orderData}, new ProductListViewHandler());
 
 menuTab.initMenuTab();
 productList.initPrdList();
-productDatail.initAddBtn();
