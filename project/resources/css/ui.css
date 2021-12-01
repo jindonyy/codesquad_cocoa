@@ -213,27 +213,59 @@
 .aside {
     width: 310px;
     height: calc(100vh - 147px);
-    max-height: 653px;
-    margin-bottom: 50px;
 }
 .receipt-box {
     height: calc(100% - 110px);
     padding: 25px;
     border: 1px solid var(--light-gray);
 }
-.receipt-box dl {
-    margin-bottom: 20px;
+.receipt-box dl + dl {
+    margin-top: 25px;
 }
 .receipt-box .order-list {
-    height: calc(100% - 215px);
-    overflow-y: scroll;
+    height: calc(100% - 222px);
 }
 .receipt-box dt {
     font-size: 1.1rem;
     font-weight: var(--medium);
 }
 .receipt-box dt + dd {
-    margin-top: 10px;
+    margin-top: 7px;
+}
+.receipt-box .address dd {
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+}
+.receipt-box .order-list dd {
+    height: calc(100% - 32px);
+    overflow-y: scroll;
+}
+.receipt-box .order-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.receipt-box .order-list li + li {
+    margin-top: 5px;
+}
+.receipt-box .order-list .quantity-wrap {
+    display: flex;
+    border: 1px solid var(--color-black);
+    border-radius: 2px;
+    overflow: hidden;
+}
+.receipt-box .order-list .quantity-wrap button {
+    width: 22px;
+    height: 22px;
+}
+.receipt-box .order-list .order-quantity {
+    display: block;
+    width: 22px;
+    line-height: 22px;
+    text-align: center;
 }
 .receipt-box .price dd {
     text-align: right;
@@ -241,7 +273,7 @@
     font-weight: var(--bold);
 }
 .receipt-box .warning {
-    margin-top: -10px;
+    margin-top: 10px;
     font-size: 0.9rem;
 }
 .receipt-box .warning-num {
