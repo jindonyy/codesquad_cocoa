@@ -232,17 +232,22 @@ class OrderDataManger {
         this.selectedMenu = $$('.menu-item')[0].dataset.menu;
     }
 
-    updateOrderList(selectedPrdCode) {
-        let orderQuantity = this.orderList.get(selectedPrdCode);
-        orderQuantity ? orderQuantity += 1 : orderQuantity = 1;
+    updateOrderList(selectedPrdData, sign) {
+        let quantity = this.orderList.get(selectedPrdData.get('code'));
 
-        this.orderList.set(selectedPrdCode, orderQuantity);
-
-        return orderQuantity;
-    }
-
-    updateAmount(price) {
-        return this.amount += price;
+        if(quantity <= 1 && sign === '-') {
+            quantity = 0;
+            this.orderList.delete(selectedPrdData.get('code'));
+        } else if(quantity === undefined) {
+            quantity = 1;
+            this.orderList.set(selectedPrdData.get('code'), quantity);
+        } else {
+            quantity += Number(sign + 1);
+            this.orderList.set(selectedPrdData.get('code'), quantity);
+        }
+        this.amount += Number(sign + selectedPrdData.get('price'));
+        console.log(this.orderList, this.amount)
+        return {'quantity': quantity, 'amount': this.amount};
     }
 }
 
@@ -262,7 +267,7 @@ class ProductListViewHandler {
                 </li>`;
     }
     
-    addPrdList(menu) {
+    renderPrdList(menu) {
         let prdList = "";
     
         menu.forEach(prd => {
@@ -282,23 +287,16 @@ class ProductListViewHandler {
 
 
 class ReceiptViewHandler {
-    orderListTemplate(selectedPrdData, orderQuantity) {
-        return `<li data-code="${selectedPrdData.get('code')}">
-                    <span class="order-prd-name">${selectedPrdData.get('prdName')}</span>
-                    <div class="quantity-wrap">
-                        <button class="plus-btn" type="button">+</button>
-                        <span class="order-quantity">${orderQuantity}</span>
-                        <button class="minus-btn" type="button">-</button>
-                    </div>
-                </li>`;
+    renderOrderList($orderItem) {
+        $('.order-list ul').appendChild($orderItem);
     }
 
-    addOrderList(selectedPrdData, orderQuantity) {
-        $('.order-list ul').innerHTML += this.orderListTemplate(selectedPrdData, orderQuantity);
-    }
-
-    changeOrderQuantity(selectedPrdCode, orderQuantity) {
-        $(`.order-list li[data-code=${selectedPrdCode}] .order-quantity`).innerText = orderQuantity;
+    changeOrderQuantity(selectedPrdCode, quantity) {
+        if(quantity) {
+            $(`.order-list li[data-code=${selectedPrdCode}] .order-quantity`).innerText = quantity;
+        } else {
+            $(`.order-list li[data-code=${selectedPrdCode}]`).remove();
+        }
     }
     
     updateAmountView(amount) {
@@ -326,7 +324,7 @@ class MenuTabEventController {
                 const selectedMenu = this.orderData.selectedMenu;
                 const selectedMenuData = this.prdData.productsData.get(selectedMenu);
 
-                this.prdListView.addPrdList(selectedMenuData);
+                this.prdListView.renderPrdList(selectedMenuData);
                 PrdListEventController.prototype.addPrdListEvent.call(productList);
                 $('.contents').classList.remove('detail');
             });
@@ -334,7 +332,7 @@ class MenuTabEventController {
     }
 
     initMenuTab() {
-        this.prdListView.addPrdList(this.prdData.productsData.get(this.orderData.selectedMenu));
+        this.prdListView.renderPrdList(this.prdData.productsData.get(this.orderData.selectedMenu));
         this.addMenuTabEvent();
     }
 }
@@ -371,15 +369,14 @@ class PrdListEventController {
             const selectedMenuData = this.prdData.productsData.get(selectedMenu);
             const selectedPrdData = selectedMenuData.get(selectedPrdCode);
 
-            const orderQuantity = this.orderData.updateOrderList(selectedPrdCode);
-            const amount = this.orderData.updateAmount(selectedPrdData.get('price'));
+            const orderInfo = this.orderData.updateOrderList(selectedPrdData, '+');
 
-            if(orderQuantity === 1) {
-                this.receiptView.addOrderList(selectedPrdData, orderQuantity);
+            if(orderInfo.quantity === 1) {
+                ReceiptEventController.prototype.addOrderList.apply(receipt, [selectedPrdData, orderInfo.quantity]);
             } else {
-                this.receiptView.changeOrderQuantity(selectedPrdCode, orderQuantity);
+                this.receiptView.changeOrderQuantity(selectedPrdCode, orderInfo.quantity);
             }
-            this.receiptView.updateAmountView(amount);
+            this.receiptView.updateAmountView(orderInfo.amount);
         });
     }
 
@@ -390,12 +387,58 @@ class PrdListEventController {
 }
 
 
+class ReceiptEventController {
+    constructor({prdData, orderData}, receiptView) {
+        this.prdData = prdData;
+        this.orderData = orderData;
+        this.receiptView = receiptView;
+    }
+
+    addOrderList(selectedPrdData, quantity) {
+        const $orderItem = document.createElement('li');
+        $orderItem.dataset.code = selectedPrdData.get('code');
+        $orderItem.innerHTML += `<span class="order-prd-name">${selectedPrdData.get('prdName')}</span>
+                                <div class="quantity-wrap">
+                                    <button class="plus-btn" type="button">+</button>
+                                    <span class="order-quantity">${quantity}</span>
+                                    <button class="minus-btn" type="button">-</button>
+                                </div>`;
+        this.addEventToQuantityBtn($orderItem);
+        this.receiptView.renderOrderList($orderItem);
+    }
+
+    addEventToQuantityBtn($orderItem) {
+        $orderItem.querySelector('.quantity-wrap').addEventListener('click', e => {
+            const target = e.target;
+            const selectedPrdCode = target.closest('li').dataset.code;
+            const selectedMenu = this.orderData.selectedMenu;
+            const selectedMenuData = this.prdData.productsData.get(selectedMenu);
+            const selectedPrdData = selectedMenuData.get(selectedPrdCode);
+            let sign;
+
+            if(target.classList.contains('plus-btn')) sign = '+';
+            else if(target.classList.contains('minus-btn')) {
+                sign = '-';
+            }
+
+            const orderInfo = this.orderData.updateOrderList(selectedPrdData, sign);
+
+            this.receiptView.changeOrderQuantity(selectedPrdCode, orderInfo.quantity);
+            this.receiptView.updateAmountView(orderInfo.amount);
+        });
+    }
+}
+
+
 const productData = new productDataManager();
 const orderData = new OrderDataManger();
+const productListView = new ProductListViewHandler();
+const receiptView = new ReceiptViewHandler();
 const menuTab = new MenuTabEventController({'prdData': productData, 'orderData': orderData},
-                                            new ProductListViewHandler());
+                                            productListView);
 const productList = new PrdListEventController({'prdData': productData, 'orderData': orderData},
-                                            {'prdListView': new ProductListViewHandler(), 'receiptView': new ReceiptViewHandler()});
+                                            {'prdListView': productListView, 'receiptView': receiptView});
+const receipt = new ReceiptEventController({'prdData': productData, 'orderData': orderData}, receiptView);
 
 menuTab.initMenuTab();
 productList.initPrdList();
