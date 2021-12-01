@@ -134,7 +134,7 @@ class productDataManager {
                     ['description', `100% 알래스카 폴락 패티의 바삭함,
                     맥도날드의 타르타르소스와 부드러운 스팀번이 조화로운 필레 오 피쉬
                     `]
-                ])],
+                ])]
             ])],
             ['side', new Map([
                 ['side_0', new Map([
@@ -218,7 +218,7 @@ class productDataManager {
                     ['description', `딸기 본연의 맛과 향이 살아 있는
                     상큼 달콤한 딸기 칠러!`],
                     ['set', false]
-                ])],
+                ])]
             ])]
         ]);
     }
@@ -230,6 +230,17 @@ class OrderDataManger {
         this.orderList = new Map([]);
         this.amount = 0;
         this.selectedMenu = $$('.menu-item')[0].dataset.menu;
+    }
+
+    updateOrderList(selectedPrdCode) {
+        let orderQuantity = this.orderList.get(selectedPrdCode);
+        orderQuantity ? orderQuantity += 1 : orderQuantity = 1;
+        this.orderList.set(selectedPrdCode, orderQuantity);
+        return orderQuantity;
+    }
+
+    updateAmount(price) {
+        return this.amount += price;
     }
 }
 
@@ -363,16 +374,13 @@ class PrdDetailEventController {
             const selectedMenu = this.orderData.selectedMenu;
             const selectedMenuData = this.prdData.productsData.get(selectedMenu);
             const selectedPrdData = selectedMenuData.get(selectedPrdCode);
-            const orderList = this.orderData.orderList;
-            let orderQuantity = orderList.get(selectedPrdCode);
 
-            orderQuantity ? orderQuantity += 1 : orderQuantity = 1;
-            this.orderData.amount += selectedPrdData.get('price');
-            orderList.set(selectedPrdCode, orderQuantity);
+            const orderQuantity = this.orderData.updateOrderList(selectedPrdCode);
+            const amount = this.orderData.updateAmount(selectedPrdData.get('price'));
             this.receiptView.updateReceipt({
                 'prdName': selectedPrdData.get('prdName'),
                 'orderQuantity': orderQuantity,
-                'amount': this.orderData.amount
+                'amount': amount
             });
         });
     }
