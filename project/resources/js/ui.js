@@ -145,7 +145,6 @@ class productDataManager {
                     자연 모짜렐라 치즈로 빈틈 없이 고소한
                     맥도날드 치즈스틱을
                     2조각과 4조각으로 다양하게 즐겨보세요!`],
-                    ['set', false]
                 ])],
                 ['side_1', new Map([
                     ['code', 'side_1'],
@@ -153,7 +152,6 @@ class productDataManager {
                     ['price', 2400],
                     ['description', `통으로 썰어낸 감자를 맥도날드만의 노하우로 튀겨낸 남다른 맛과 바삭함!
                     맥도날드의 역사가 담긴 월드 클래스 후렌치 후라이`],
-                    ['set', true]
                 ])],
                 ['side_2', new Map([
                     ['code', 'side_2'],
@@ -161,7 +159,6 @@ class productDataManager {
                     ['price', 2500],
                     ['description', `바삭하고 촉촉한 치킨이 한 입에 쏙!
                     다양한 소스로 입맛에 맞게 즐겨보세요!`],
-                    ['set', true]
                 ])],
                 ['side_3', new Map([
                     ['code', 'side_3'],
@@ -170,7 +167,6 @@ class productDataManager {
                     ['description', `부드러운 100% 닭안심살을 스파이시 시즈닝으로
                     매콤 바삭하게 튀겨낸 치킨 텐더!
                     2가지 소스로 입맛에 맞게 즐겨보세요!`],
-                    ['set', false]
                 ])],
                 ['side_4', new Map([
                     ['code', 'side_4'],
@@ -178,7 +174,6 @@ class productDataManager {
                     ['price', 1700],
                     ['description', `씹으면 바삭바삭,
                     속은 부드러운 감자의 고소함.`],
-                    ['set', false]
                 ])]
             ])],
             ['drink', new Map([
@@ -187,21 +182,18 @@ class productDataManager {
                     ['prdName', '코카-콜라'],
                     ['price', 2100],
                     ['description', `갈증해소 뿐만이 아니라 기분까지 상쾌하게! 코카-콜라`],
-                    ['set', true]
                 ])],
                 ['drink_1', new Map([
                     ['code', 'drink_1'],
                     ['prdName', '스프라이트'],
                     ['price', 2100],
                     ['description', `청량함에 레몬, 라임향을 더한 시원함!`],
-                    ['set', true]
                 ])],
                 ['drink_2', new Map([
                     ['code', 'drink_2'],
                     ['prdName', '환타'],
                     ['price', 2100],
                     ['description', `톡 쏘는 오렌지 향!`],
-                    ['set', true]
                 ])],
                 ['drink_3', new Map([
                     ['code', 'drink_3'],
@@ -209,7 +201,6 @@ class productDataManager {
                     ['price', 3400],
                     ['description', `자두의 진한 달콤함이
                     얼음을 만나 더욱 시원한 여름 음료, 자두 칠러!`],
-                    ['set', false]
                 ])],
                 ['drink_4', new Map([
                     ['code', 'drink_4'],
@@ -217,9 +208,12 @@ class productDataManager {
                     ['price', 3400],
                     ['description', `딸기 본연의 맛과 향이 살아 있는
                     상큼 달콤한 딸기 칠러!`],
-                    ['set', false]
                 ])]
             ])]
+        ]);
+        this.setData = new Map([
+            ['side', ['side_1', 'side_2']],
+            ['drink', ['drink_0', 'drink_1', 'drink_2']]
         ]);
     }
 }
@@ -265,7 +259,39 @@ class OrderDataManger {
                 this.minAmount.calcValue = this.minAmount.standard;
             }
         }
+        console.log(this.orderList, this.amount, this.minAmount.calcValue);
+        // this.chanegeSetMenu();
         return {'quantity': quantity, 'amount': this.amount, 'minAmount': this.minAmount.calcValue};
+    }
+
+    chanegeSetMenu() {
+        if(this.selectedMenu === 'set') return false;
+        const checkedSet = [];
+
+        const orderBurger = this.orderList.get('burger');
+        if(orderBurger.size >= 1) checkedSet.push([...orderBurger][0]);
+
+        checkedSet.push(this.checkSetValue('side'));
+
+        checkedSet.push(this.checkSetValue('drink'));
+        
+        console.log(checkedSet);
+        if(checkedSet.length !== 3) return false;
+        // this.orderList.get('burger').get(checkedSet[0]) === 1 ? 
+    }
+
+    checkSetValue(menu) {
+        const orderMenu = [...this.orderList.get(menu)];
+        const setDataMenu = productData.setData.get(menu);
+
+        for(let i = 0; i < orderMenu.length; i++) {
+            for(let j = 0; j < setDataMenu.length; j++) {
+                console.log(orderMenu[i], setDataMenu[j])
+                if(orderMenu[i] === setDataMenu[j]) {
+                    return orderMenu[i];
+                }
+            }
+        }
     }
 }
 
@@ -311,10 +337,10 @@ class ProductListViewHandler {
         }, time[0]);
         setTimeout(function(){
             $cloneImg.classList.add('hide2');
-        }, time[0] + time[1]);
+        }, time[0]+time[1]);
         setTimeout(function(){
             $cloneImg.remove();
-        }, time[0] + time[1] + time[2]);
+        }, time[0]+time[1]+time[2]);
     }
 }
 
@@ -415,14 +441,18 @@ class PrdListEventController {
 
             const orderInfo = this.orderData.updateOrderList(selectedPrdData, '+');
 
-            this.prdListView.animetaPrdDatail([100, 200, 150]);
-            if(orderInfo.quantity === 1) {
-                ReceiptEventController.prototype.addOrderList.apply(receipt, [selectedPrdData, orderInfo.quantity]);
-            } else {
-                this.receiptView.changeOrderQuantity(selectedPrdCode, orderInfo.quantity);
-            }
-            this.receiptView.updateAmountView(orderInfo.amount);
-            this.receiptView.updateMinAmount(orderInfo.minAmount);
+            const addBtnTime = [100, 200, 150];
+            const orderListTime = addBtnTime.reduce((acc, cur) => acc += cur);
+            this.prdListView.animetaPrdDatail(addBtnTime);
+            setTimeout(() => {
+                if(orderInfo.quantity === 1) {
+                    ReceiptEventController.prototype.addOrderList.apply(receipt, [selectedPrdData, orderInfo.quantity]);
+                } else {
+                    this.receiptView.changeOrderQuantity(selectedPrdCode, orderInfo.quantity);
+                }
+                this.receiptView.updateAmountView(orderInfo.amount);
+                this.receiptView.updateMinAmount(orderInfo.minAmount);
+            }, orderListTime);
         });
     }
 
