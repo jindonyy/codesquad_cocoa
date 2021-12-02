@@ -50,21 +50,23 @@
     display: flex;
     gap: 15px;
 }
-#header .menu-item {
+#header .menu-item button {
     padding: 5px 15px;
     font-size: 1.15rem;
     font-weight: var(--medium);
-    cursor: pointer;
 }
-#header .menu-item:after {
+#header .menu-item button:after {
     content: '';
     display: block;
     width: 0;
     height: 2px;
-    margin: 0 -2px;
+    margin: 3px -2px 0;
     background: var(--logo-yellow);
 }
-#header .menu-item.on:after {
+#header .menu-item.on button:after {
+    background: var(--logo-red);
+}
+#header .menu-item.on button:after, #header .menu-item:hover button:after {
     width: calc(100% + 4px);
     transition: all .15s ease-in;
 }
