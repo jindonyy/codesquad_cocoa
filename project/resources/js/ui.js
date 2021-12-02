@@ -227,26 +227,35 @@ class productDataManager {
 
 class OrderDataManger {
     constructor() {
-        this.orderList = new Map([]);
+        this.orderList = new Map([
+            ['burger', new Map([])],
+            ['set', new Map([])],
+            ['side', new Map([])],
+            ['drink', new Map([])]
+        ]);
         this.amount = 0;
         this.selectedMenu = $$('.menu-item')[0].dataset.menu;
     }
 
     updateOrderList(selectedPrdData, sign) {
-        let quantity = this.orderList.get(selectedPrdData.get('code'));
+        const selectedMenu = this.orderList.get(this.selectedMenu);
+        const selectedPrdCode = selectedPrdData.get('code');
+        let quantity = selectedMenu.get(selectedPrdCode);
 
         if(quantity <= 1 && sign === '-') {
             quantity = 0;
-            this.orderList.delete(selectedPrdData.get('code'));
+            selectedMenu.delete(selectedPrdCode);
         } else if(quantity === undefined) {
             quantity = 1;
-            this.orderList.set(selectedPrdData.get('code'), quantity);
+            selectedMenu.set(selectedPrdCode, quantity);
         } else {
             quantity += Number(sign + 1);
-            this.orderList.set(selectedPrdData.get('code'), quantity);
+            selectedMenu.set(selectedPrdCode, quantity);
         }
-        this.amount += Number(sign + selectedPrdData.get('price'));
-        console.log(this.orderList, this.amount)
+
+        const selectedPrdPrice = selectedPrdData.get('price');
+        this.amount += Number(sign + selectedPrdPrice);
+ 
         return {'quantity': quantity, 'amount': this.amount};
     }
 }
@@ -350,9 +359,9 @@ class PrdListEventController {
         $('.prd-list').addEventListener('click', e => {
             e.preventDefault();
             const target = e.target;
+            const prdCode = target.closest('li').dataset.prdcode;
             const selectedMenu = this.orderData.selectedMenu;
             const selectedMenuData = this.prdData.productsData.get(selectedMenu);
-            const prdCode = target.closest('li').dataset.prdcode;
             const selectedPrdData = selectedMenuData.get(prdCode);
             
             this.prdListView.showPrdDetail(selectedPrdData);
@@ -417,9 +426,7 @@ class ReceiptEventController {
             let sign;
 
             if(target.classList.contains('plus-btn')) sign = '+';
-            else if(target.classList.contains('minus-btn')) {
-                sign = '-';
-            }
+            else if(target.classList.contains('minus-btn')) sign = '-';
 
             const orderInfo = this.orderData.updateOrderList(selectedPrdData, sign);
 
