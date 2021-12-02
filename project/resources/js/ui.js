@@ -301,6 +301,21 @@ class ProductListViewHandler {
         $('.prd-detail-wrap .prd-name').innerText = selectedPrdData.get('prdName');
         $('.prd-detail-wrap .prd-text').innerText = selectedPrdData.get('description');
     }
+
+    animetaPrdDatail(time) {
+        const $cloneImg = $('.prd-detail-wrap .prd-detail-img').cloneNode(true);
+        $cloneImg.classList.add('clone-img');
+        $('.prd-detail-wrap').appendChild($cloneImg);
+        setTimeout(function(){
+            $cloneImg.classList.add('hide1');
+        }, time[0]);
+        setTimeout(function(){
+            $cloneImg.classList.add('hide2');
+        }, time[0] + time[1]);
+        setTimeout(function(){
+            $cloneImg.remove();
+        }, time[0] + time[1] + time[2]);
+    }
 }
 
 
@@ -400,6 +415,7 @@ class PrdListEventController {
 
             const orderInfo = this.orderData.updateOrderList(selectedPrdData, '+');
 
+            this.prdListView.animetaPrdDatail([100, 200, 150]);
             if(orderInfo.quantity === 1) {
                 ReceiptEventController.prototype.addOrderList.apply(receipt, [selectedPrdData, orderInfo.quantity]);
             } else {
