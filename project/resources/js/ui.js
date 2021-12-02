@@ -235,6 +235,7 @@ class OrderDataManger {
         ]);
         this.amount = 0;
         this.selectedMenu = $$('.menu-item')[0].dataset.menu;
+        this.minAmount = {'standard': 15000, 'calcValue': 15000};
     }
 
     updateOrderList(selectedPrdData, sign) {
@@ -255,8 +256,16 @@ class OrderDataManger {
 
         const selectedPrdPrice = selectedPrdData.get('price');
         this.amount += Number(sign + selectedPrdPrice);
- 
-        return {'quantity': quantity, 'amount': this.amount};
+        
+        if(sign === '+' && this.minAmount.calcValue > 0) {
+            this.minAmount.calcValue -= selectedPrdData.get('price');
+        } else if(sign === '-' && this.amount < this.minAmount.standard) {
+            this.minAmount.calcValue += selectedPrdData.get('price');
+            if(this.minAmount.calcValue > this.minAmount.standard) {
+                this.minAmount.calcValue = this.minAmount.standard;
+            }
+        }
+        return {'quantity': quantity, 'amount': this.amount, 'minAmount': this.minAmount.calcValue};
     }
 }
 
@@ -310,6 +319,17 @@ class ReceiptViewHandler {
     
     updateAmountView(amount) {
         $('.receipt-box .price-num').innerText = changeToNumberNotation(amount);
+    }
+
+    updateMinAmount(minAmount) {
+        if(minAmount > 0) {
+            $('.warning').classList.remove('hide');
+            $('#order-btn').classList.add('disabled');
+            $('.warning-num em').innerText = changeToNumberNotation(minAmount);
+        } else {
+            $('.warning').classList.add('hide');
+            $('#order-btn').classList.remove('disabled');
+        }
     }
 }
 
@@ -386,6 +406,7 @@ class PrdListEventController {
                 this.receiptView.changeOrderQuantity(selectedPrdCode, orderInfo.quantity);
             }
             this.receiptView.updateAmountView(orderInfo.amount);
+            this.receiptView.updateMinAmount(orderInfo.minAmount);
         });
     }
 
@@ -432,7 +453,12 @@ class ReceiptEventController {
 
             this.receiptView.changeOrderQuantity(selectedPrdCode, orderInfo.quantity);
             this.receiptView.updateAmountView(orderInfo.amount);
+            this.receiptView.updateMinAmount(orderInfo.minAmount);
         });
+    }
+
+    initReceipt() {
+        this.receiptView.updateMinAmount(this.orderData.minAmount.standard);
     }
 }
 
@@ -449,3 +475,4 @@ const receipt = new ReceiptEventController({'prdData': productData, 'orderData':
 
 menuTab.initMenuTab();
 productList.initPrdList();
+receipt.initReceipt();
