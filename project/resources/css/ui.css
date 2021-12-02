@@ -78,7 +78,7 @@
     display: flex;
 }
 .contents {
-    width: calc(100% - 310px);
+    width: calc(100% - 320px);
 }
 .menu-con {
     margin-right: 10px;
@@ -99,8 +99,9 @@
     margin-bottom: 5px;
     cursor: pointer;
 }
-.prd-list > li:hover .img-wrap {
+.prd-list > li .img-wrap {
     position: relative;
+    overflow: hidden;
 }
 .prd-list > li:hover .img-wrap:before {
     content: '';
@@ -108,12 +109,13 @@
     width: 100%;
     height: 100%;
     background: rgb(44, 26, 26);
-    opacity: 0.35;
+    opacity: 0.15;
     position: absolute;
     top: 0;
     left: 0;
+    z-index: 2;
 }
-.prd-list > li:hover .img-wrap:after {
+/* .prd-list > li:hover .img-wrap:after {
     content: '';
     display: block;
     position: absolute;
@@ -127,6 +129,10 @@
     font-weight: var(--medium);
     text-align: center;
     z-index: 2;
+} */
+.prd-list > li:hover .img-wrap img {
+    transform: scale(1.15);
+    transition: all .5s ease;
 }
 .prd-list .text-wrap {
     margin-top: 12px;
@@ -145,7 +151,7 @@
     display: none;
     position: relative;
     height: var(--prd-detail-hight);
-    padding: 10px 0;
+    padding: 10px 0 20px;
     border-top: 1px solid var(--light-gray);
 }
 .contents.detail .prd-detail-wrap {
@@ -163,10 +169,9 @@
 }
 .prd-detail-wrap .prd-detail {
     height: 100%;
-    padding: 30px 0;
+    padding: 30px 0 20px;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
     gap: 10px;
 }
 .prd-detail-wrap .prd-name {
@@ -174,7 +179,6 @@
     font-weight: 600;
 }
 .prd-detail-wrap .prd-text {
-    max-height: 122px;
     margin-right: 200px;
     overflow-y: scroll;
     flex: 1;
@@ -182,18 +186,18 @@
 .prd-detail-wrap .prd-info-btn button {
     font-size: 1.1rem;
     font-weight: var(--medium);
+    line-height: 22px;
 }
 .prd-detail-wrap .prd-info-btn button:after {
     content: '+';
     display: inline-block;
-    width: 25px;
-    height: 25px;
+    width: 22px;
+    height: 22px;
     margin-left: 5px;
     font-size: 1.45rem;
     font-weight: var(--regular);
     border-radius: 50%;
     color: var(--color-white);
-    line-height: 1.4;
 }
 .prd-detail-wrap .prd-nutrition-btn {
     margin-right: 20px;
