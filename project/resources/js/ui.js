@@ -259,35 +259,38 @@ class OrderDataManger {
                 this.minAmount.calcValue = this.minAmount.standard;
             }
         }
-        console.log(this.orderList, this.amount, this.minAmount.calcValue);
         // this.chanegeSetMenu();
         return {'quantity': quantity, 'amount': this.amount, 'minAmount': this.minAmount.calcValue};
     }
 
     chanegeSetMenu() {
         if(this.selectedMenu === 'set') return false;
-        const checkedSet = [];
 
-        const orderBurger = this.orderList.get('burger');
-        if(orderBurger.size >= 1) checkedSet.push([...orderBurger][0]);
-
-        checkedSet.push(this.checkSetValue('side'));
-
-        checkedSet.push(this.checkSetValue('drink'));
-        
-        console.log(checkedSet);
-        if(checkedSet.length !== 3) return false;
-        // this.orderList.get('burger').get(checkedSet[0]) === 1 ? 
+        let setSide;
+        let setDrink;
+        switch(this.selectedMenu) {
+            case 'burger':
+                setSide = this.checkSetValue('side');
+                setDrink = this.checkSetValue('drink');
+                break;
+            case 'side':
+                setDrink = this.checkSetValue('drink');
+                break;
+            case 'drink':
+                console.log(this.checkSetValue('side'));
+                break;
+        }
+        console.log(setSide, setDrink);
     }
 
     checkSetValue(menu) {
         const orderMenu = [...this.orderList.get(menu)];
         const setDataMenu = productData.setData.get(menu);
 
+        console.log(orderMenu, setDataMenu);
         for(let i = 0; i < orderMenu.length; i++) {
             for(let j = 0; j < setDataMenu.length; j++) {
-                console.log(orderMenu[i], setDataMenu[j])
-                if(orderMenu[i] === setDataMenu[j]) {
+                if(orderMenu[i][0] === setDataMenu[j]) {
                     return orderMenu[i];
                 }
             }
@@ -446,7 +449,7 @@ class PrdListEventController {
             this.prdListView.animetaPrdDatail(addBtnTime);
             setTimeout(() => {
                 if(orderInfo.quantity === 1) {
-                    ReceiptEventController.prototype.addOrderList.apply(receipt, [selectedPrdData, orderInfo.quantity]);
+                    ReceiptEventController.prototype.addOrderList.apply(receipt, [selectedMenu, selectedPrdData, orderInfo.quantity]);
                 } else {
                     this.receiptView.changeOrderQuantity(selectedPrdCode, orderInfo.quantity);
                 }
@@ -470,8 +473,9 @@ class ReceiptEventController {
         this.receiptView = receiptView;
     }
 
-    addOrderList(selectedPrdData, quantity) {
+    addOrderList(selectedMenu, selectedPrdData, quantity) {
         const $orderItem = document.createElement('li');
+        $orderItem.dataset.menu = selectedMenu;
         $orderItem.dataset.code = selectedPrdData.get('code');
         $orderItem.innerHTML += `<span class="order-prd-name">${selectedPrdData.get('prdName')}</span>
                                 <div class="quantity-wrap">
@@ -487,6 +491,7 @@ class ReceiptEventController {
         $orderItem.querySelector('.quantity-wrap').addEventListener('click', e => {
             const target = e.target;
             const selectedPrdCode = target.closest('li').dataset.code;
+            this.orderData.selectedMenu = target.closest('li').dataset.menu;
             const selectedMenu = this.orderData.selectedMenu;
             const selectedMenuData = this.prdData.productsData.get(selectedMenu);
             const selectedPrdData = selectedMenuData.get(selectedPrdCode);
