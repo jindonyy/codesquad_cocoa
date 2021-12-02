@@ -221,19 +221,23 @@
 }
 
 .aside {
-    width: 310px;
-    height: calc(100vh - 147px);
+    width: 320px;
+    height: calc(100vh - var(--header-hight));
 }
 .receipt-box {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
     height: calc(100% - 110px);
     padding: 25px;
     border: 1px solid var(--light-gray);
 }
 .receipt-box dl + dl {
-    margin-top: 25px;
+    margin-top: 23px;
 }
 .receipt-box .order-list {
-    height: calc(100% - 222px);
+    flex: 1;
+    overflow-y: scroll;
 }
 .receipt-box dt {
     font-size: 1.1rem;
@@ -257,9 +261,16 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 10px;
 }
 .receipt-box .order-list li + li {
-    margin-top: 5px;
+    margin-top: 8px;
+}
+.receipt-box .order-list .order-prd-name {
+    flex: 1;
+    /* text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden; */
 }
 .receipt-box .order-list .quantity-wrap {
     display: flex;
@@ -284,7 +295,9 @@
 }
 .receipt-box .warning {
     margin-top: 10px;
-    font-size: 0.9rem;
+}
+.receipt-box .warning.hide {
+    display: none;
 }
 .receipt-box .warning-num {
     color: var(--color-warning);
@@ -302,4 +315,5 @@
 }
 #order-btn.disabled {
     background: var(--btn-gray);
+    cursor: default;
 }
