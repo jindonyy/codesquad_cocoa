@@ -1,65 +1,4 @@
-class ToDoModel {
-    constructor() {
-        this.storageKey = 'to do list';
-        this.$addInput = document.querySelector('.addFormWrap input');
-    }
-
-    initData () {
-        const storage = localStorage.getItem(this.storageKey);
-        this.toDoDataArr = storage ? JSON.parse(storage) : [];
-        return this.toDoDataArr;
-    }
-
-    saveData() {
-        localStorage.setItem(this.storageKey, JSON.stringify(this.toDoDataArr));
-    }
-
-    addData(data) {
-        this.toDoDataArr.push(data);
-        this.saveData();
-    }
-
-    changeData({id, key, value}) {
-        const dataToChange = this.toDoDataArr.find(data => data.id === id);
-        const dataIndex = this.toDoDataArr.indexOf(dataToChange);
-        dataToChange[key] = value;
-        this.toDoDataArr[dataIndex] = dataToChange;
-        this.saveData();
-    }
-
-    deleteData(data) {
-        this.toDoDataArr = this.toDoDataArr.filter(el => el.txt !== data);
-        this.saveData();
-    }
-}
-
-
-class ToDoView {
-    constructor() {
-        this.$addBtn = document.querySelector('.addBtn');
-        this.$addInput = document.querySelector('.addFormWrap input');
-    }
-
-    initView(data) {
-        data.forEach((list) => this.renderToDo(list));
-    }
-
-    renderToDo(list) {
-        document.querySelector('.toDoList').appendChild(list);
-        this.$addInput.value = "";
-    }
-
-    markCompletionToDo(list) {
-        list.classList.toggle('completion');
-    }
-
-    deleteToDo(list) {
-        list.closest('li').remove();
-    }
-}
-
-
-class ToDoController {
+export class ListController {
     constructor(model, view) {
         this.model = model;
         this.view = view;
@@ -102,7 +41,7 @@ class ToDoController {
         const $completionBtn = $li.querySelector('.completionBtn');
         $completionBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            const completionValue = $li.classLis.contains('completion') ? 'completion' : 'incompletion';
+            const completionValue = $li.classList.contains('completion') ? 'completion' : 'incompletion';
             this.model.changeData({id: $li.id, key: 'completion', value: completionValue});
             this.view.markCompletionToDo($li);
         });
@@ -110,16 +49,16 @@ class ToDoController {
     }
 
     editingBtnHandler(list) {
-        const $editingBtn = $li.querySelector('.editingBtn');
+        const $editingBtn = list.querySelector('.editingBtn');
         $editingBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            const $txt = $li.querySelector('.txt');
+            const $txt = list.querySelector('.txt');
             if($txt.readOnly) {
                 $txt.focus();
                 $txt.readOnly = false;
             }
             else {
-                this.model.changeData({id: $li.id, key: 'txt', value: $txt.value});
+                this.model.changeData({id: list.id, key: 'txt', value: $txt.value});
                 $txt.readOnly = true;
             }
         });
@@ -127,10 +66,10 @@ class ToDoController {
     }
 
     deleteBtnHandler(list) {
-        const $deleteBtn = $li.querySelector('.deleteBtn');
+        const $deleteBtn = list.querySelector('.deleteBtn');
         $deleteBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            const dataTodelete = $li.querySelector('.txt').innerText;
+            const dataTodelete = list.querySelector('.txt').innerText;
             this.model.deleteData(dataTodelete);
             this.view.deleteToDo($deleteBtn);
         });
@@ -154,8 +93,3 @@ class ToDoController {
         return $li;
     }
 }
-
-
-const toDoList = new ToDoController(new ToDoModel(), new ToDoView());
-toDoList.initToDo();
-toDoList.initEvent();

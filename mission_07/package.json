@@ -1,0 +1,7 @@
+{
+  "name": "TodoList",
+  "type": "module",
+  "description": "dony's to do list",
+  "main": "./resources/js/toDoApp.js",
+  "author": "dony"
+}
