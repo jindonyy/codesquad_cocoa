@@ -84,7 +84,7 @@
     margin-right: 10px;
     padding-bottom: 20px;
     max-height: calc(100vh - var(--header-hight));
-    overflow-y: scroll;
+    overflow-y: overlay;
 }
 .contents.detail .menu-con {
     height: calc(100vh - var(--header-hight) - var(--prd-detail-hight));
@@ -189,7 +189,7 @@
 }
 .prd-detail-wrap .prd-text {
     margin-right: 200px;
-    overflow-y: scroll;
+    overflow-y: auto;
     flex: 1;
 }
 .prd-detail-wrap .prd-info-btn button {
@@ -245,8 +245,8 @@
     margin-top: 23px;
 }
 .receipt-box .order-list {
+    max-height: calc(100% - 190px);
     flex: 1;
-    overflow-y: scroll;
 }
 .receipt-box dt {
     font-size: 1.1rem;
@@ -264,7 +264,8 @@
 }
 .receipt-box .order-list dd {
     height: calc(100% - 32px);
-    overflow-y: scroll;
+    padding-right: 5px;
+    overflow-y: auto;
 }
 .receipt-box .order-list li {
     display: flex;

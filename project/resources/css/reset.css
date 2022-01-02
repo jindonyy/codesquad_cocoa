@@ -277,3 +277,14 @@ textarea:-moz-placeholder {
 textarea:-ms-input-placeholder {
     color: var(--color-light-gray);
 }
+
+::-webkit-scrollbar {
+    width: 7px;
+}
+::-webkit-scrollbar-thumb {
+    border-radius: 4px;
+    background: #ddd;
+}
+::-webkit-scrollbar-track {
+    background: transparent;
+}
